@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info: {title: Portal de Registro de Exámenes NETEC API, version: 0.2.0-spec}
+servers: [{url: /api/v1}]
+security: [{bearerAuth: []}]
+paths:
+  /exam-requests:
+    post:
+      operationId: createDraft
+      summary: Crea borrador propio; requester y datos derivados se ignoran si llegan del cliente.
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody: {$ref: '#/components/requestBodies/ExamRequestInput'}
+      responses: {'201': {$ref: '#/components/responses/ExamRequest'}, '400': {$ref: '#/components/responses/Problem'}}
+    get:
+      operationId: listOwnRequests
+      parameters:
+        - {name: page, in: query, schema: {type: integer, minimum: 0, default: 0}}
+        - {name: size, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 20}}
+        - {name: folio, in: query, schema: {type: string}}
+        - {name: participant, in: query, schema: {type: string}}
+        - {name: status, in: query, schema: {$ref: '#/components/schemas/Status'}}
+        - {name: technologyId, in: query, schema: {type: string, format: uuid}}
+        - {name: from, in: query, schema: {type: string, format: date}}
+        - {name: to, in: query, schema: {type: string, format: date}}
+      responses: {'200': {$ref: '#/components/responses/Page'}, '400': {$ref: '#/components/responses/Problem'}}
+  /exam-requests/{id}:
+    parameters: [{$ref: '#/components/parameters/Id'}]
+    get:
+      operationId: getOwnRequest
+      responses: {'200': {$ref: '#/components/responses/ExamRequest'}, '404': {$ref: '#/components/responses/Problem'}}
+    put:
+      operationId: updateDraft
+      parameters: [{$ref: '#/components/parameters/IfMatch'}]
+      requestBody: {$ref: '#/components/requestBodies/ExamRequestInput'}
+      responses: {'200': {$ref: '#/components/responses/ExamRequest'}, '409': {$ref: '#/components/responses/Problem'}}
+  /exam-requests/{id}/validate:
+    post:
+      operationId: validateDraft
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses: {'200': {description: Válido; incluye total recalculado}, '400': {$ref: '#/components/responses/Problem'}, '422': {$ref: '#/components/responses/Problem'}}
+  /exam-requests/{id}/submit:
+    post:
+      operationId: submitDraft
+      description: Requiere Idempotency-Key e If-Match. Resuelve precio/examen vigente, recalcula total, congela snapshots y crea outbox. Nunca confía en importes del cliente.
+      parameters: [{$ref: '#/components/parameters/Id'}, {$ref: '#/components/parameters/IdempotencyKey'}, {$ref: '#/components/parameters/IfMatch'}]
+      responses: {'200': {$ref: '#/components/responses/ExamRequest'}, '400': {$ref: '#/components/responses/Problem'}, '409': {$ref: '#/components/responses/Problem'}, '422': {$ref: '#/components/responses/Problem'}}
+  /exam-requests/{id}/cancel:
+    post:
+      operationId: cancelDraft
+      parameters: [{$ref: '#/components/parameters/Id'}, {$ref: '#/components/parameters/IfMatch'}]
+      responses: {'200': {$ref: '#/components/responses/ExamRequest'}, '409': {$ref: '#/components/responses/Problem'}}
+  /catalogs/course-types: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/segments: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/companies: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/branches: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/sales-advisors: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/technologies: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/vendors: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/certifications: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/courses: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/business-centers: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/cost-centers: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/clients: {$ref: '#/components/pathItems/Catalog'}
+  /catalogs/exams:
+    get:
+      operationId: searchExams
+      summary: Busca exámenes activos; filtros vendorId, technologyId, certificationId y q; paginado.
+      responses: {'200': {$ref: '#/components/responses/CatalogPage'}}
+  /catalogs/exams/{id}:
+    get:
+      operationId: getExam
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      description: Devuelve detalle y precio aplicable cuando puede resolverse inequívocamente; si faltan dimensiones usa enlace al endpoint price.
+      responses: {'200': {description: Examen, content: {application/json: {schema: {$ref: '#/components/schemas/ExamDetail'}}}}, '404': {$ref: '#/components/responses/Problem'}}
+  /catalogs/exams/{id}/price:
+    get:
+      operationId: resolveExamPrice
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      description: Endpoint separado provisional por ADR-011; acepta futuras dimensiones país/contrato sin inflar búsqueda.
+      responses: {'200': {description: Precio vigente, content: {application/json: {schema: {$ref: '#/components/schemas/Money'}}}}, '404': {$ref: '#/components/responses/Problem'}, '422': {$ref: '#/components/responses/Problem'}}
+  /admin/exams:
+    post:
+      operationId: createExam
+      summary: Testing Center agrega examen; autorización técnica pendiente.
+      responses: {'201': {description: Creado}, '403': {$ref: '#/components/responses/Problem'}}
+  /admin/exams/{id}:
+    put:
+      operationId: updateExam
+      parameters: [{$ref: '#/components/parameters/Id'}, {$ref: '#/components/parameters/IfMatch'}]
+      summary: Modifica examen, retake y comentarios con auditoría.
+      responses: {'200': {description: Actualizado}, '409': {$ref: '#/components/responses/Problem'}}
+  /admin/exams/{id}/prices:
+    post:
+      operationId: addExamPrice
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      summary: Agrega costo base USD por proveedor/vigencia; MAD convierte con tasa administrada aparte.
+      responses: {'201': {description: Precio creado}, '409': {$ref: '#/components/responses/Problem'}}
+  /admin/exchange-rates/usd-eur:
+    post:
+      operationId: addUsdEurExchangeRate
+      summary: Registra tasa USD→EUR y vigencia para conversión exclusiva de MAD.
+      responses: {'201': {description: Tasa creada}, '403': {$ref: '#/components/responses/Problem'}, '409': {$ref: '#/components/responses/Problem'}}
+components:
+  securitySchemes: {bearerAuth: {type: http, scheme: bearer, bearerFormat: JWT}}
+  pathItems:
+    Catalog:
+      get:
+        summary: Catálogo activo buscable y paginado con q, page y size.
+        responses: {'200': {$ref: '#/components/responses/CatalogPage'}}
+  parameters:
+    Id: {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+    IdempotencyKey: {name: Idempotency-Key, in: header, required: false, schema: {type: string, minLength: 16, maxLength: 128}}
+    IfMatch: {name: If-Match, in: header, required: true, schema: {type: string}}
+  requestBodies:
+    ExamRequestInput:
+      required: true
+      content: {application/json: {schema: {$ref: '#/components/schemas/ExamRequestInput'}}}
+  schemas:
+    Status: {type: string, enum: [BORRADOR, REGISTRADA, PENDIENTE_NOTIFICACION, ENVIADA_A_FACTURACION, CANCELADA]}
+    ParticipantInput:
+      type: object
+      additionalProperties: false
+      required: [firstName, lastName, email]
+      properties: {id: {type: string, format: uuid}, firstName: {type: string, maxLength: 100}, lastName: {type: string, maxLength: 100}, secondLastName: {type: [string, 'null'], maxLength: 100}, email: {type: string, format: email, maxLength: 254}, company: {type: [string, 'null'], maxLength: 160}, country: {type: [string, 'null'], pattern: '^[A-Z]{2}$'}, city: {type: [string, 'null'], maxLength: 120}, externalParticipantId: {type: [string, 'null'], maxLength: 80}}
+    ExamRequestItemInput:
+      type: object
+      additionalProperties: false
+      required: [examId, saleUnitPrice, quantity, participantIds]
+      properties: {id: {type: string, format: uuid}, examId: {type: string, format: uuid}, saleUnitPrice: {type: number, format: decimal, exclusiveMinimum: 0, multipleOf: 0.0001}, quantity: {type: integer, minimum: 1}, participantIds: {type: array, minItems: 1, maxItems: 100, uniqueItems: true, items: {type: string, format: uuid}}}
+    ExamRequestInput:
+      type: object
+      additionalProperties: false
+      description: No admite requester, snapshots, costo base, moneda, lineTotal ni totalAmount. `saleUnitPrice` sí es entrada autorizada por evidencia.
+      properties: {scheduledCourseCode: {type: [string, 'null'], maxLength: 80}, courseTypeId: {type: [string, 'null'], format: uuid}, salesAdvisorId: {type: [string, 'null'], format: uuid}, segmentId: {type: [string, 'null'], format: uuid}, organizationalLocationId: {type: [string, 'null'], format: uuid}, companyId: {type: [string, 'null'], format: uuid}, billingReference: {type: [string, 'null'], maxLength: 250}, participants: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/ParticipantInput'}}, items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/ExamRequestItemInput'}}, observations: {type: [string, 'null'], maxLength: 2000}}
+    Money: {type: object, required: [amount, currency], properties: {amount: {type: number, format: decimal, minimum: 0, multipleOf: 0.0001}, currency: {type: string, pattern: '^[A-Z]{3}$'}, sourceAmount: {type: [number, 'null'], format: decimal}, sourceCurrency: {type: [string, 'null'], pattern: '^[A-Z]{3}$'}, exchangeRate: {type: [number, 'null'], format: decimal}, exchangeRateDate: {type: [string, 'null'], format: date-time}, validFrom: {type: [string, 'null'], format: date}, validTo: {type: [string, 'null'], format: date}}}
+    ExamDetail: {type: object, required: [id, code, name, vendor, technology, active], properties: {id: {type: string, format: uuid}, code: {type: string}, name: {type: string}, vendor: {type: object}, technology: {type: object}, certification: {type: [object, 'null']}, active: {type: boolean}, price: {anyOf: [{$ref: '#/components/schemas/Money'}, {type: 'null'}]}}}
+    ExamRequest: {allOf: [{$ref: '#/components/schemas/ExamRequestInput'}, {type: object, required: [id, status, requester, createdAt, version], properties: {id: {type: string, format: uuid}, folio: {type: [string, 'null']}, status: {$ref: '#/components/schemas/Status'}, requester: {type: object}, itemSnapshots: {type: array, items: {type: object}}, totalAmount: {anyOf: [{$ref: '#/components/schemas/Money'}, {type: 'null'}]}, createdAt: {type: string, format: date-time}, submittedAt: {type: [string, 'null'], format: date-time}, version: {type: integer}}}]}
+    Problem: {type: object, required: [type, title, status, code, timestamp, correlationId], properties: {type: {type: string, format: uri}, title: {type: string}, status: {type: integer}, detail: {type: string}, instance: {type: string}, code: {type: string}, timestamp: {type: string, format: date-time}, correlationId: {type: string}, fieldErrors: {type: array, items: {type: object}}}}
+  responses:
+    ExamRequest: {description: Solicitud propia, content: {application/json: {schema: {$ref: '#/components/schemas/ExamRequest'}}}}
+    Page: {description: Página propia ordenada por fecha descendente, content: {application/json: {schema: {type: object}}}}
+    CatalogPage: {description: "Página de elementos activos con id, code y name", content: {application/json: {schema: {type: object}}}}
+    Problem: {description: Problem Details, content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}}

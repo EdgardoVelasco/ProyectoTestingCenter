@@ -1,0 +1,3 @@
+# ADR-011: Costo de catálogo y precio de venta
+
+Contexto: Excel aporta costo USD; Ventas puede vender distinto y MAD opera en EUR. Decisión: ExamPrice conserva costo USD por proveedor/vigencia. Solo MAD aplica tasa USD→EUR configurada/versionada en backend; cada línea congela monto/moneda origen, tasa/fecha, base convertido, precio venta EUR y totales. Otras ubicaciones usan USD sin conversión. Alternativas: precios EUR manuales, proveedor cambiario en tiempo real, conversión frontend. Consecuencias: cálculo reproducible y centralizado; exige gobierno de tasas y redondeo. Riesgos/preguntas: fuente/frecuencia/responsable/precisión P-20. **Estado: ACEPTADO PARCIAL.**
