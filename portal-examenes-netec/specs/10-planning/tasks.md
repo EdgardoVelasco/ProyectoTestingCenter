@@ -64,3 +64,18 @@ Spec/ADR/BDD/trazabilidad, implementación y pruebas: COMPLETED. Validación hum
 ## Requester como Asesor Comercial
 
 Spec, ADR-044, migración V5, autoridad backend, UI read-only, contrato y pruebas. Delegación/catálogo permanecen fuera del MVP.
+## Notificacion Graph — Etapa A
+
+| ID | Estado | Dependencia |
+|---|---|---|
+| NOT-SPEC-001 | COMPLETADA | P-39 documentada como bloqueo |
+| NOT-DB-001/002 | PENDIENTE | Migracion Outbox y snapshots |
+| NOT-GRAPH-001 | PENDIENTE | Consentimiento, buzon y secreto de DEV |
+| NOT-TPL-001 | PENDIENTE | Plantilla aprobada y P-39 |
+| NOT-WORKER-001 | PENDIENTE | Modelo y polling configurables |
+| NOT-RETRY-001 | PENDIENTE | ADR-047 |
+| NOT-IDEM-001 | PENDIENTE | ADR-048 |
+| NOT-API-001/NOT-UI-001 | PENDIENTE | Submit y detalle |
+| NOT-TEST-001/002 | PENDIENTE | Unitarias, integracion y Testcontainers |
+| NOT-E2E-001 | BLOQUEADA | P-39 y verificacion manual Graph |
+| NOT-DOC-001 | PENDIENTE | Runbook sin secretos |

@@ -292,3 +292,27 @@ Evidencia:
 - Flyway V5 validada en Testcontainers y aplicada en base local; 4/4 históricos mantienen igualdad de snapshots.
 - Frontend/backend/PostgreSQL activos; login 200 y endpoint protegido sin token 401.
 - No existe catálogo/selector de asesores en producción; el resumen muestra la identidad cargada.
+## Validacion Etapa A — notificacion de aprobacion por correo (2026-07-24)
+
+Estado: **BLOCKED / NO IMPLEMENTACION**.
+
+| Severidad | Hallazgo | Estado |
+|---|---|---|
+| CRITICO | Discovery P-39 no define los codigos incluidos en LATAM para aplicar CC al grupo de Testing Center | Bloquea RF-NOT-007, CC real y cualquier prueba de envio real hasta confirmacion |
+| ALTO | No se verificaron permiso Graph Mail.Send, admin consent, buzon Exchange Online ni Application RBAC | Pendiente manual; no se afirma disponibilidad |
+| ALTO | No existe implementacion backend de Outbox/worker/Graph en el commit base | Esperado; tareas permanecen PENDIENTES |
+| MEDIO | Politica de reintentos requiere aprobacion de configuracion final | Documentada como propuesta configurable |
+| BAJO | Plantilla y contrato requieren pruebas con clientes de correo | Pendiente de Etapa C/D |
+
+Validaciones realizadas: commit base `22e56d0` preservado; no se modifico codigo Angular/Spring/NGINX/Docker ni migraciones; `.env` no se mostro ni se rastrea; no se crearon secretos ni destinatarios hardcodeados. La matriz, BDD, ADR, backlog y change log fueron actualizados para Etapa A.
+
+Decision de gobernanza: no iniciar implementacion ni enviar correo real hasta responder P-39 con la lista exacta de codigos LATAM (o aprobar expresamente un MVP sin CC). Se confirma adicionalmente el grupo Outlook de desarrollo en `specs/01-discovery/cc-group-evidence.md`; el dominio productivo sera configurable.
+## Correccion definitiva de enrutamiento DEV — 2026-07-24
+
+Estado: **BLOCKED BEFORE IMPLEMENTATION**.
+
+- CRITICO: `.env` no contiene `GRAPH_TESTING_CENTER_CC_GROUP` ni una direccion SMTP completa equivalente. La instruccion exige detener implementacion y no inventar el valor.
+- ALTO: destinatarios DEV y remitente dinamico ya estan especificados, pero aun no existe tabla/seed ni Outbox implementado.
+- ALTO: admin consent, mail-enabled group, buzon remitente y RBAC requieren verificacion operacional.
+
+Se documentaron ADR-051, ADR-052, ADR-054 y ADR-055, snapshots, reglas RN-NOT-019..032, requisitos RF-NOT-017..030 y escenarios de las ocho sedes. No se modifico codigo ni se crearon migraciones.

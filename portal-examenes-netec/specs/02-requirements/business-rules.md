@@ -163,3 +163,40 @@ Se agregan RN-AUTH-001..014 y RN-UI-041..051. Su texto normativo, alcance y rela
 - RN-COM-014: identidad incompleta puede seguir política de borrador, pero bloquea envío.
 - RN-COM-015: registro para otro asesor queda fuera del MVP.
 - RN-COM-016: no se consulta catálogo de asesores.
+## Reglas de notificacion de aprobacion (propuestas)
+
+- RN-NOT-001: toda solicitud enviada tiene sede valida.
+- RN-NOT-002: el backend resuelve el aprobador; el frontend no decide destinatarios.
+- RN-NOT-003: las rutas BOG/MED/SCL/LIM, WTC y MAD usan reglas persistidas confirmadas; CA/PAN bloquean envio sin regla.
+- RN-NOT-004: no se envia correo antes de persistir solicitud y Outbox.
+- RN-NOT-005: fallo de correo no elimina la solicitud.
+- RN-NOT-006: no se envia sin aprobador activo y correo valido.
+- RN-NOT-007: destinatario, sede, regla y CC se congelan en snapshots.
+- RN-NOT-008: un borrador re-resuelve regla al enviar.
+- RN-NOT-009: submit y worker son idempotentes por solicitud/tipo/version.
+- RN-NOT-010: SENT no se reprocesa automaticamente.
+- RN-NOT-011: errores transitorios se reintentan respetando Retry-After.
+- RN-NOT-012: errores permanentes o maximo de intentos terminan DEAD_LETTER.
+- RN-NOT-013: contenido de usuario se escapa antes de HTML.
+- RN-NOT-014: el AC no recibe copia.
+- RN-NOT-015: Testing Center recibe copia unicamente para codigos expresamente aprobados; P-39 impide inferir LATAM.
+- RN-NOT-016: CA y PAN permiten borrador, pero bloquean envio.
+- RN-NOT-017: el correo no es aprobacion automatica.
+- RN-NOT-018: compra y aprobacion dentro del portal siguen fuera de fase 1.
+
+## Correccion definitiva DEV
+
+- RN-NOT-019: el remitente es la asesora autenticada.
+- RN-NOT-020: el frontend no determina el remitente.
+- RN-NOT-021: backend obtiene el remitente desde identidad validada.
+- RN-NOT-022: remitente se conserva como snapshot.
+- RN-NOT-023: reintentos conservan remitente original.
+- RN-NOT-024: BOG/MED/SCL/LIM/CA/PAN usan la regla DEV de Felipe.
+- RN-NOT-025: WTC usa la regla DEV de Angélica.
+- RN-NOT-026: MAD usa la regla DEV de Paola.
+- RN-NOT-027: todas las sedes incluyen CC del grupo configurado.
+- RN-NOT-028: CC proviene de configuracion externa completa.
+- RN-NOT-029: CA/PAN tienen ruta activa y no bloquean envio cuando la configuracion es valida.
+- RN-NOT-030: frontend solo muestra resolucion.
+- RN-NOT-031: backend vuelve a resolver durante submit.
+- RN-NOT-032: cambios se realizan en datos/configuracion, no en codigo.

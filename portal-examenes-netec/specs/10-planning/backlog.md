@@ -88,3 +88,21 @@ Pendiente humano: probar logout con una cuenta real de Entra y ejecutar revisió
 - ADV-UI-001: COMPLETED.
 - ADV-TEST-001: COMPLETED automatizado; verificación con dos cuentas Entra pendiente manual.
 - ADV-DELEGATION-001: FUTURE, fuera del MVP.
+## Incremento notificacion Graph (Etapa A)
+
+| ID | Estado | Alcance |
+|---|---|---|
+| NOT-SPEC-001 | COMPLETADA | Requisitos, reglas, ADR, BDD y bloqueo P-39 documentados. |
+| NOT-DB-001 | PENDIENTE | Tabla NotificationOutbox, indices, constraints y snapshots. |
+| NOT-DB-002 | PENDIENTE | Snapshot de destinatario y clave idempotente. |
+| NOT-GRAPH-001 | PENDIENTE | Adaptador Graph app-only y configuracion segura. |
+| NOT-TPL-001 | PENDIENTE | Plantilla HTML/texto plano con escaping. |
+| NOT-WORKER-001 | PENDIENTE | Worker configurable con lease y concurrencia. |
+| NOT-RETRY-001 | PENDIENTE | Reintentos, Retry-After y Dead Letter. |
+| NOT-IDEM-001 | PENDIENTE | Idempotencia de submit y Outbox. |
+| NOT-API-001 | PENDIENTE | Submit y detalle con estado de notificacion. |
+| NOT-UI-001 | PENDIENTE | Estados pendiente/enviada/fallida. |
+| NOT-TEST-001 | PENDIENTE | Unitarias y contrato Graph mock. |
+| NOT-TEST-002 | PENDIENTE | Integracion PostgreSQL/Testcontainers. |
+| NOT-E2E-001 | BLOQUEADA | Prueba real DEV, requiere P-39, consentimiento y buzon. |
+| NOT-DOC-001 | PENDIENTE | Guia operativa y runbook. |

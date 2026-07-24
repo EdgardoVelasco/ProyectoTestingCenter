@@ -60,3 +60,8 @@ El header utiliza `AuthenticatedUserMenuComponent`: identidad visible, avatar de
 ## Asesor Comercial en el MVP
 
 El usuario autenticado es también el Asesor Comercial. La UI lo muestra en modo de solo lectura y el backend lo resuelve desde el principal; no existe selector ni catálogo de asesores. Véase ADR-044.
+## Notificaciones de aprobacion (propuesto)
+
+El siguiente incremento sustituira el reenvio manual mediante Transactional Outbox y un adaptador Microsoft Graph app-only. La solicitud se persiste antes del envio y el frontend solo muestra estados. Las direcciones provienen de configuracion por sede, nunca de codigo.
+
+La Etapa A esta documentada, pero la implementacion permanece bloqueada por P-39: Discovery aun no identifica que codigos comprenden LATAM para la copia al grupo de Testing Center. Tambien deben verificarse manualmente permiso Graph, consentimiento, buzon de desarrollo y restricciones RBAC.

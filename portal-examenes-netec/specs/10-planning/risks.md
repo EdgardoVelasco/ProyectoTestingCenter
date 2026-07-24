@@ -64,3 +64,12 @@ Nuevos riesgos ALTO: Excel sin país/moneda/vigencia; confundir costo base con p
 - Duplicación temporal requester/advisor puede divergir: construcción backend atómica y pruebas de igualdad.
 - Claims sin nombre/UPN pueden producir snapshot inválido: error seguro y bloqueo de envío.
 - Una futura delegación no debe reescribir snapshots históricos ni reintroducir mass assignment.
+## Riesgos del envio Graph
+
+- **CRITICO:** P-39 no define codigos LATAM; un CC incorrecto puede exponer solicitudes. Bloquea implementacion de CC y envio real.
+- **ALTO:** permiso Mail.Send, consentimiento, buzon o RBAC ausentes pueden producir 401/403 o envio desde buzon no autorizado.
+- **ALTO:** Graph acepta el mensaje y el worker falla antes de SENT; posible duplicado. Mitigar con idempotencia y reconciliacion.
+- **ALTO:** tokens/secretos en logs, payloads o runtime config. Mitigar con allowlist y sanitizacion.
+- **MEDIO:** dos workers o lease vencido procesan la misma fila; usar SKIP LOCKED/versionado.
+- **MEDIO:** reglas de sede cambian entre borrador y submit; resolver nuevamente y congelar snapshot.
+- **MEDIO:** HTML inseguro por observaciones; escapar y probar sanitizacion.

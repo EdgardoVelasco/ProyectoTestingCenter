@@ -4,6 +4,13 @@ servers:
   - url: /api/v1
     description: Ruta relativa same-origin; NGINX conserva `/api` al reenviar.
 security: [{bearerAuth: []}]
+x-notification-stage-a:
+  status: PROPOSED
+  submit: Persiste solicitud y Outbox; responde PENDIENTE_NOTIFICACION sin afirmar entrega Graph.
+  sender: POST /v1.0/users/{senderMailbox}/sendMail mediante adaptador backend app-only.
+  idempotencyKey: approval-exam-request:{requestId}:v{submissionVersion}
+  cc: Testing Center solo para codigos expresamente aprobados; P-39 bloquea inferir LATAM.
+  outOfScope: Aprobacion/rechazo dentro del portal, compra, vouchers y Graph desde frontend.
 paths:
   /auth/me:
     get:

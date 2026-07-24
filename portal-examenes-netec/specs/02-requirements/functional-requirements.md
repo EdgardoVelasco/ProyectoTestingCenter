@@ -133,3 +133,31 @@ Actor: Usuario autenticado. Prioridad P0. Precondición común: identidad valida
 | RF-COM-012 | Sincronizar conceptos | MVP | requester y advisor quedan iguales; otra cuenta produce otros snapshots | RN-COM-008/015; AC-COM-024/027 |
 
 Todos son prioridad P0, dependen de RF-AUTH-005..008 y se prueban en Angular, servicio/integración Spring y `commercial-information.feature`.
+## Incremento propuesto: notificacion de aprobacion por correo
+
+Los siguientes requisitos estan **PROPUESTOS** y no autorizan implementacion hasta resolver P-39 y validar Graph en desarrollo.
+
+| ID | Requisito | Criterio resumido | Regla/BDD | Estado |
+|---|---|---|---|---|
+| RF-NOT-001 | Resolver aprobador por sede | submit usa regla vigente en backend | RN-NOT-001..003; approval-email | PROPUESTO |
+| RF-NOT-002 | Conservar snapshot de aprobador | sede, regla, nombre, correo y CC quedan inmutables | RN-NOT-007 | PROPUESTO |
+| RF-NOT-003 | Crear Outbox transaccional | solicitud y outbox confirman en una transaccion | RN-NOT-004/005 | PROPUESTO |
+| RF-NOT-004 | Procesar asincronamente | worker reclama PENDING fuera de tx | RN-NOT-010/011 | PROPUESTO |
+| RF-NOT-005 | Autenticar ante Graph | client credentials y scope .default | seguridad/ADR-046 | PROPUESTO |
+| RF-NOT-006 | Enviar via Graph | endpoint users/{sender}/sendMail confirma | RN-NOT-006 | PROPUESTO |
+| RF-NOT-007 | Enviar CC operativo | solo codigos aprobados para Testing Center | RN-NOT-015; P-39 | BLOQUEADO |
+| RF-NOT-008 | Registrar resultado | SENT/FAILED/DEAD_LETTER y auditoria | RN-NOT-010..012 | PROPUESTO |
+| RF-NOT-009 | Reintentar transitorios | respeta Retry-After y maximo | RN-NOT-011 | PROPUESTO |
+| RF-NOT-010 | Dead Letter | permanentes o maximo terminan DEAD_LETTER | RN-NOT-012 | PROPUESTO |
+| RF-NOT-011 | Evitar duplicados | clave unica de solicitud/version | RN-NOT-009/010 | PROPUESTO |
+| RF-NOT-012 | Mostrar estado | UI distingue pendiente, enviada y fallo sin tecnicismos | RN-NOT-005/010 | PROPUESTO |
+| RF-NOT-013 | Conservar solicitud ante fallo | Graph fallido no elimina datos | RN-NOT-005 | PROPUESTO |
+| RF-NOT-014 | Bloquear ruta faltante | CA/PAN no envian sin regla | RN-NOT-001/016 | PROPUESTO |
+| RF-NOT-015 | Generar HTML y texto | partes equivalentes y seguras | RN-NOT-013 | PROPUESTO |
+| RF-NOT-016 | Escapar entrada | observaciones y nombres no inyectan HTML | RN-NOT-013 | PROPUESTO |
+
+## Correccion de enrutamiento DEV (propuesta)
+
+RF-NOT-017..024 resuelven el destinatario principal por sede: BOG/MED/SCL/LIM/CA/PAN a Felipe, WTC a Angélica y MAD a Paola. RF-NOT-025 agrega CC a todas las sedes desde `GRAPH_TESTING_CENTER_CC_GROUP`. RF-NOT-026 obtiene el remitente desde la identidad autenticada; RF-NOT-027 muestra el aprobador; RF-NOT-028 revalida en submit; RF-NOT-029 conserva snapshots; RF-NOT-030 permite CA/PAN.
+
+Todos dependen de configuracion DEV valida y quedan PENDIENTES mientras falte la variable SMTP completa del grupo.

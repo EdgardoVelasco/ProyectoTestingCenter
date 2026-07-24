@@ -92,3 +92,15 @@ Antes de cualquier cambio frontend: leer `specs/NETEC Manual de identidad corpor
 - No mostrar selector, autocomplete, mock ni catálogo de asesores.
 - No aceptar campos de asesor en requests; conservar snapshots separados según ADR-044.
 - No implementar delegación o registro en nombre de otro asesor sin Spec aprobado.
+## Notificaciones de aprobacion
+
+- No enviar correo directamente dentro de la transaccion; usar Transactional Outbox.
+- Resolver aprobador en backend desde configuracion persistida; nunca hardcodear destinatarios.
+- No confiar en destinatario enviado por frontend.
+- No usar `/me/sendMail` con client credentials; encapsular Graph app-only.
+- No registrar tokens, client secrets ni cuerpos completos con datos personales.
+- Mantener idempotencia, snapshots, reintentos y control de concurrencia.
+- No afirmar envio antes de confirmacion de Graph y estado SENT.
+- Testing Center CC solo para codigos explicitamente aprobados; no inferir LATAM.
+- No usar cuentas productivas en DEV y no modificar permisos Azure automaticamente.
+- Actualizar plantilla, BDD y trazabilidad ante cambios de correo.

@@ -174,3 +174,24 @@ Cobertura completa RF→RN→HU→CA/VAC→BDD→UI→API/entidad→tarea. ADR-0
 |---|---|---|---|---|---|---|---|
 | RF-COM-006..008/011/012 | RN-COM-008..011/014..016 | HU-COM-002..003 | AC-COM-021..024/027/029/030; commercial-information | Información comercial/CMP-029 | `/api/auth/me`; principal | ADV-UI/TEST-001; Angular 44 | IMPLEMENTED/TESTED |
 | RF-COM-009/010 | RN-COM-010..013 | HU-COM-002 | AC-COM-025/026/028; commercial-information | Resumen read-only | ExamRequest response; snapshots V5 | ADV-DB/BE/TEST-001; Spring 28 | IMPLEMENTED/TESTED |
+## Incremento notificacion de aprobacion (Etapa A)
+
+| Requisito | Regla | Historia | Criterio/BDD | Pantalla/API | Entidad/tarea | Estado |
+|---|---|---|---|---|---|---|
+| RF-NOT-001..003 | RN-NOT-001..008 | HU-NOT-001/002 | approval-email: route, atomic outbox | submit/detail | ExamRequest/NotificationOutbox; NOT-DB-001/002 | PROPUESTO |
+| RF-NOT-004..006 | RN-NOT-006/010/011 | HU-NOT-004 | Graph, worker, auth failures | worker/Graph adapter | ApprovalNotificationSender; NOT-GRAPH-001/WORKER-001 | PROPUESTO |
+| RF-NOT-007 | RN-NOT-014/015 | HU-NOT-006 | CC confirmado / P-39 | plantilla | routing config; NOT-TPL-001 | BLOQUEADO |
+| RF-NOT-008..010 | RN-NOT-010..012 | HU-NOT-003/004 | SENT/retry/dead-letter | detalle/outbox | NotificationOutbox; NOT-RETRY-001 | PROPUESTO |
+| RF-NOT-011..014 | RN-NOT-005/009/016 | HU-NOT-002/005 | duplicate, CA/PAN, persistence | submit | idempotency key; NOT-IDEM-001 | PROPUESTO |
+| RF-NOT-015..016 | RN-NOT-013 | HU-NOT-001 | HTML/texto y escaping | template | renderer; NOT-TPL-001 | PROPUESTO |
+
+P-39 es una dependencia critica y bloquea RF-NOT-007 y cualquier prueba de correo real con CC.
+
+## Correccion de enrutamiento DEV
+
+| Requisito | Regla | BDD | Configuracion/entidad | Estado |
+|---|---|---|---|---|
+| RF-NOT-017..024 | RN-NOT-024..026 | approval-email outline por sede | approval_routing_rule | PENDIENTE |
+| RF-NOT-025 | RN-NOT-027/028 | CC todas las sedes/falta variable | GRAPH_TESTING_CENTER_CC_GROUP | BLOQUEADO |
+| RF-NOT-026..029 | RN-NOT-019..023/029 | UPN/snapshots/retry | ExamRequest/Outbox | PENDIENTE |
+| RF-NOT-030 | RN-NOT-030..032 | manipulacion y revalidacion | submit backend | PENDIENTE |
