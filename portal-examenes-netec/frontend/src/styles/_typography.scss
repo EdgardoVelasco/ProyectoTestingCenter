@@ -1,0 +1,29 @@
+@import '@fontsource/montserrat/300.css';
+@import '@fontsource/montserrat/400.css';
+@import '@fontsource/montserrat/500.css';
+@import '@fontsource/montserrat/600.css';
+@import '@fontsource/montserrat/700.css';
+
+html,
+body,
+button,
+input,
+textarea,
+select,
+.mat-mdc-card,
+.mat-mdc-form-field,
+.mat-mdc-button-base,
+.mat-mdc-dialog-container {
+  font-family: var(--font-family-primary);
+}
+
+h1,
+h2,
+h3,
+p { margin-block-start: 0; }
+
+h1 { font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl)); font-weight: var(--font-weight-bold); line-height: var(--line-height-tight); }
+h2 { font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); line-height: 1.3; }
+h3 { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); line-height: 1.35; }
+body { font-size: var(--font-size-md); line-height: var(--line-height-normal); }
+button { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); letter-spacing: 0.01em; }

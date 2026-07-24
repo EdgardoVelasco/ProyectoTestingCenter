@@ -1,0 +1,11 @@
+@use 'styles/tokens';
+@use 'styles/typography';
+@use 'styles/layout';
+@use 'styles/components';
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 22.5rem; color: var(--color-text-primary); background: var(--color-background); }
+button,
+input,
+textarea { font: inherit; }

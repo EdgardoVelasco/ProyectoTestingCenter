@@ -19,3 +19,48 @@ Nuevos riesgos ALTO: Excel sin país/moneda/vigencia; confundir costo base con p
 | Alto | Centro de costos/sucursal modelados incorrectamente | aprobar ADR-013 antes de I2 |
 | Medio | Precio cambia entre resumen y submit | revalidar, recalcular y exigir nueva confirmación |
 | Medio | Colección aumenta PII y tamaño de correo | máximo configurable, minimización, no logs completos |
+| Crítico | Correos oficiales de aprobadores no confirmados | bloquear producción hasta P-23; nunca inventar |
+| Alto | Sede sin regla, inactiva o vencida | validación backend; borrador permitido |
+| Alto | Regla cambia entre resumen y submit | re-resolver con versión y exigir nueva confirmación |
+| Alto | Destinatario codificado o manipulado | configuración persistida, DTO cerrado y pruebas |
+| Alto | Ausencia/suplencia | resolver P-33/P-34; no inventar fallback |
+| Medio | Snapshots de correo incrementan PII | mínimo privilegio, no logs y retención |
+| Medio | Renombrar estado rompe consumidores | TT-029 y migración contractual antes de código |
+| Crítico | No existe propietario/autorizador de reglas | bloquear administración productiva; resolver P-25 y aprobar RBAC |
+| Alto | Grupo de directorio y alcance LATAM confundidos | no almacenar miembros; resolver P-39 y probar CC por código |
+| Crítico | Secreto expuesto en runtime config/bundle | allowlist, validación y SEC-TEST-001 |
+| Alto | URL absoluta o localhost en producción | escaneo y validación de arranque |
+| Alto | Desarrollo y producción usan rutas distintas | `/api` único y pruebas de proxy |
+| Alto | `proxy_pass` elimina `/api` | prueba NGX-004 y revisión de template |
+| Bajo, controlado | `protectedResourceMap` no coincide | MSAL Angular 6.x fijado; coincidencia estricta same-origin y AUTH-TEST-001 aprobada |
+| Medio | MSAL incrementa el bundle inicial | vigilar presupuesto; evaluar carga diferida/optimización sin debilitar autenticación |
+| Alto | Configuración carga después del bootstrap | initializer bloqueante y ENV-003 |
+| Alto | NGINX inicia con variables faltantes | entrypoint fail-fast sin valores |
+| Crítico | `.env` versionado o secreto histórico | CI/Git audit; no reescribir historial sin plan |
+| Alto | CORS innecesario o abierto | same-origin; CORS dev restringido |
+| Medio | Runtime config cacheado/obsoleto | `no-store`; bundles hash con caché larga |
+| Alto | Aplicación inicia incompleta | esquema estricto y pantalla de error segura |
+
+## Riesgos login/stepper
+
+| Severidad | Riesgo | Mitigación |
+|---|---|---|
+| CRÍTICO | formulario falso/captura de contraseña | ADR-033, VAC/BDD, sin inputs password |
+| CRÍTICO | confiar solo en frontend/no validar JWT | backend autoritativo y 401/403 |
+| ALTO | identidad ficticia/equivocada | `/api/auth/me`, ownership/snapshot |
+| ALTO | token/claims sensibles visibles | minimización y escaneo |
+| ALTO | restauración incorrecta/loop/logout incompleto | máquina y BDD |
+| ALTO | externo parcialmente habilitado | disabled sin ruta/handler |
+| ALTO | pérdida de datos | FormGroup raíz, advertencia, borrador |
+| ALTO | historial abre ruta protegida | guard + backend + Atrás |
+| MEDIO | stepper inaccesible/solo color | VAC-STEP, teclado/lector |
+| MEDIO | controles destruidos al navegar | prueba de conservación |
+- Empresa libre puede producir alias/duplicados; mitigar conservando snapshot y plan de catálogo futuro.
+- Claims UPN pueden faltar o variar; backend aplica precedencia explícita y UI muestra ausencia segura.
+- Contraste del logout sobre header puede degradarse con estilos Material; validar estilo computado y foco.
+- Menú overlay puede truncarse o perder foco en viewport/zoom; usar CDK y validar 360 px/200%.
+- Ocultar UPN móvil sin conservarlo en overlay sería una pérdida de información; queda prohibido.
+- `mat-menu` elevó bundle inicial a 1.02 MB; warning permanece en 750 kB y umbral de error se ajusta de 1.00 a 1.10 MB. Optimización sigue pendiente y no debe elevarse nuevamente sin ADR/revisión.
+- Duplicación temporal requester/advisor puede divergir: construcción backend atómica y pruebas de igualdad.
+- Claims sin nombre/UPN pueden producir snapshot inválido: error seguro y bloqueo de envío.
+- Una futura delegación no debe reescribir snapshots históricos ni reintroducir mass assignment.

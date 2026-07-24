@@ -1,5 +1,9 @@
 # Mensajes de validación
 
+## Mensajes implementados en frontend — 2026-07-21
+
+**AGREGADO.** Se muestran `REQUIRED`, `INVALID_EMAIL`, `PARTICIPANT_EMAIL_DUPLICATE`, `EXAM_REQUIRED`, `QUANTITY_POSITIVE`, `QUANTITY_MISMATCH`, `SALE_PRICE_INVALID`, `MAX_LENGTH` y el resumen “Revisa los campos marcados antes de continuar.” Para MAD sin resolución backend se presenta el bloqueo de `EXCHANGE_RATE_REQUIRED`; no se simula una tasa.
+
 | Código | Mensaje |
 |---|---|
 | REQUIRED | Completa {etiqueta}. |
@@ -16,7 +20,7 @@
 | PRICE_UNAVAILABLE | El precio del examen no está disponible. |
 | CURRENCY_MISSING | La moneda del examen no está configurada. |
 | QUANTITY_POSITIVE | La cantidad debe ser mayor que cero. |
-| QUANTITY_MISMATCH | La cantidad de esta línea debe coincidir con sus vouchers asignados, si la regla está activa. |
+| QUANTITY_MISMATCH | La cantidad de esta línea debe coincidir con el número de participantes asignados. |
 | PARTICIPANT_REQUIRED | Agrega al menos un participante. |
 | PARTICIPANT_EMAIL_INVALID | El correo del participante no es válido. |
 | PARTICIPANT_EMAIL_DUPLICATE | Este correo ya está registrado dentro de la solicitud. |
@@ -35,5 +39,14 @@
 | EXCHANGE_RATE_CHANGED | El tipo de cambio cambió. Revisa nuevamente los importes en EUR. |
 | PRICE_EXPIRED | El precio base ya no está vigente. |
 | LIMIT_100 | Se permite un máximo de 100 registros. |
+| SITE_REQUIRED | Selecciona una sede. |
+| APPROVAL_ROUTE_UNAVAILABLE | Esta sede no tiene un aprobador activo configurado. Puedes guardar el borrador, pero no enviarlo. |
+| APPROVER_EMAIL_INVALID | El aprobador asignado no tiene un correo válido configurado. |
+| APPROVAL_ROUTE_CHANGED | El aprobador asignado cambió. Revisa nuevamente el resumen antes de enviar. |
+| APPROVAL_RESOLUTION_ERROR | No fue posible resolver el aprobador. Intenta nuevamente. |
 
 El resumen anuncia cantidad, enlaza al primer control y no depende solo de color/iconos.
+- “La empresa es obligatoria.”
+- “La empresa debe contener al menos 2 caracteres.”
+- “La empresa no puede superar los 150 caracteres.”
+- “N/A no es un nombre de empresa válido.”

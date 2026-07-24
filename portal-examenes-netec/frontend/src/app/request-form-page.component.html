@@ -1,0 +1,314 @@
+<a class="skip-link" href="#request-form">Saltar al formulario</a>
+<header class="page-header">
+  <div class="header-content">
+    <p class="eyebrow">NETEC · Testing Center</p>
+    <h1>Portal de Registro de Exámenes NETEC</h1>
+    <h2>Crear solicitud de examen</h2>
+    <p>Registra la información comercial, los exámenes y los participantes antes de enviar la solicitud a Facturación.</p>
+  </div>
+</header>
+
+<main class="shell" id="request-form">
+  @if (error()) {
+    <div class="error-summary" tabindex="-1" role="alert" aria-live="assertive">
+      <div><strong>Revisa la solicitud</strong><p>{{error()}}</p></div>
+    </div>
+  }
+
+  <form [formGroup]="form" novalidate>
+    <mat-card class="section-card requester-card">
+      <mat-card-header>
+        <div mat-card-avatar class="section-number" aria-hidden="true">1</div>
+        <mat-card-title>Datos del solicitante</mat-card-title>
+        <mat-card-subtitle>Datos obtenidos de tu sesión; no pueden editarse.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (requester(); as person) {
+          @if (person.email.endsWith('.invalid')) {
+            <p class="development-banner" role="status">Modo desarrollo: identidad local no productiva.</p>
+          }
+          <dl class="readonly-grid" aria-label="Información del solicitante">
+            <div><dt>Nombre</dt><dd>{{person.name}}</dd></div>
+            <div><dt>Correo</dt><dd class="email-value">{{person.email || 'No disponible'}}</dd></div>
+            <div><dt>Área</dt><dd>{{person.area || 'No disponible'}}</dd></div>
+            <div><dt>Unidad de negocio</dt><dd>{{person.businessUnit || 'No disponible'}}</dd></div>
+          </dl>
+        } @else {
+          <div class="loading-row" role="status"><mat-spinner diameter="24"></mat-spinner> Identificando sesión…</div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <nav class="form-stepper" aria-label="Progreso de la solicitud">
+      @for (step of steps; track step; let index = $index) {
+        <button type="button"
+          [class.is-current]="currentStep() === index"
+          [class.is-completed]="stepState(index) === 'completed'"
+          [class.has-error]="stepState(index) === 'error'"
+          [disabled]="stepState(index) === 'blocked'"
+          [attr.aria-current]="currentStep() === index ? 'step' : null"
+          (click)="goToStep(index)">
+          <span>{{index + 1}}</span>{{step}}
+        </button>
+      }
+    </nav>
+
+    @if (currentStep() === 0) {
+    <mat-card class="section-card" formGroupName="commercial">
+      <mat-card-header>
+        <div mat-card-avatar class="section-number" aria-hidden="true">2</div>
+        <mat-card-title>Información comercial</mat-card-title>
+        <mat-card-subtitle>Datos administrativos que acompañarán la solicitud.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (loadingCatalogs()) {
+          <div class="loading-row" role="status"><mat-spinner diameter="24"></mat-spinner> Cargando catálogos…</div>
+        } @else {
+          <div class="form-grid">
+            <mat-form-field>
+              <mat-label>Clave Curso Programado</mat-label>
+              <input matInput formControlName="scheduledCourseCode" maxlength="80" aria-describedby="course-code-hint">
+              <mat-hint id="course-code-hint">Identificador del evento o curso programado. Opcional.</mat-hint>
+              <mat-error>Usa como máximo 80 caracteres.</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Tipo de curso (opcional)</mat-label>
+              <mat-select formControlName="courseTypeId">
+                <mat-option value="">Sin seleccionar</mat-option>
+                @for (option of catalogs()?.courseTypes ?? []; track option.id) {<mat-option [value]="option.id">{{option.name}}</mat-option>}
+              </mat-select>
+            </mat-form-field>
+            <div class="readonly-field" role="group" aria-labelledby="sales-advisor-label" aria-describedby="sales-advisor-hint">
+              <span id="sales-advisor-label">Asesor Comercial</span>
+              @if (requester(); as person) {
+                <strong>{{person.name || 'No disponible'}}</strong>
+                @if (!person.name) {
+                  <small class="field-error" role="alert">No fue posible resolver la identidad del Asesor Comercial.</small>
+                }
+              } @else {
+                <strong role="status">Identificando sesión…</strong>
+              }
+              <small id="sales-advisor-hint">Se obtiene automáticamente de la sesión.</small>
+            </div>
+            <mat-form-field>
+              <mat-label>Segmento</mat-label>
+              <mat-select formControlName="segmentId" required>
+                @for (option of catalogs()?.segments ?? []; track option.id) {<mat-option [value]="option.id">{{option.code}} · {{option.name}}</mat-option>}
+              </mat-select>
+              <mat-error>Este campo es obligatorio.</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Centro de costos o sucursal</mat-label>
+              <mat-select formControlName="organizationalLocationId" required>
+                @for (option of catalogs()?.locations ?? []; track option.id) {<mat-option [value]="option.id">{{option.code}} · {{option.name}}</mat-option>}
+              </mat-select>
+              <mat-hint>Catálogo único vigente; no se inventa una jerarquía entre ambos conceptos.</mat-hint>
+              <mat-error>Este campo es obligatorio.</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Empresa</mat-label>
+              <input matInput formControlName="companyName" maxlength="150" required
+                aria-describedby="company-hint" (blur)="normalizeCompany()">
+              <mat-hint id="company-hint">Ingresa el nombre de la empresa o cliente.</mat-hint>
+              @if (form.controls.commercial.controls.companyName.hasError('required') || form.controls.commercial.controls.companyName.hasError('trimRequired')) {
+                <mat-error>La empresa es obligatoria.</mat-error>
+              } @else if (form.controls.commercial.controls.companyName.hasError('companyMinLength')) {
+                <mat-error>La empresa debe contener al menos 2 caracteres.</mat-error>
+              } @else if (form.controls.commercial.controls.companyName.hasError('maxlength') || form.controls.commercial.controls.companyName.hasError('companyMaxLength')) {
+                <mat-error>La empresa no puede superar los 150 caracteres.</mat-error>
+              } @else if (form.controls.commercial.controls.companyName.hasError('companyNotAvailable')) {
+                <mat-error>N/A no es un nombre de empresa válido.</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field class="full-width">
+              <mat-label>Referencia de facturación (opcional)</mat-label>
+              <input matInput formControlName="billingReference" maxlength="250" aria-describedby="billing-hint">
+              <mat-hint id="billing-hint">Ejemplo: OF 84886 VA 10273 FGP FEB-2938</mat-hint>
+              <mat-error>Usa como máximo 250 caracteres.</mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+              <mat-label>Observaciones (opcional)</mat-label>
+              <textarea matInput rows="4" formControlName="observations" maxlength="2000" aria-describedby="observations-hint"></textarea>
+              <mat-hint id="observations-hint">Agrega información relevante para Facturación o Testing Center.</mat-hint>
+              <mat-error>Usa como máximo 2000 caracteres.</mat-error>
+            </mat-form-field>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+    }
+
+    @if (currentStep() === 2) {
+    <mat-card class="section-card">
+      <mat-card-header>
+        <div mat-card-avatar class="section-number" aria-hidden="true">4</div>
+        <mat-card-title>Exámenes y asignaciones</mat-card-title>
+        <mat-card-subtitle>Selecciona el catálogo real y asigna participantes; la cantidad se calcula automáticamente.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="filter-grid" formGroupName="examFilters" aria-label="Filtros de examen">
+          <mat-form-field><mat-label>Fabricante (filtro)</mat-label><mat-select formControlName="vendorId"><mat-option value="">Todos</mat-option>@for (option of catalogs()?.vendors ?? []; track option.id) {<mat-option [value]="option.id">{{option.name}}</mat-option>}</mat-select></mat-form-field>
+          <mat-form-field><mat-label>Buscar examen</mat-label><input matInput formControlName="query" placeholder="Código, nombre o curso"></mat-form-field>
+        </div>
+        <div class="section-toolbar">
+          <p>El costo base proviene del catálogo persistido. El backend es la fuente de verdad.</p>
+          <button mat-stroked-button type="button" (click)="addExamItem()" [disabled]="items.length >= 100">Agregar examen</button>
+        </div>
+        <div formArrayName="items" class="exam-lines">
+          @for (item of items.controls; track $index; let index = $index) {
+            <fieldset class="exam-line" [formGroupName]="index">
+              <legend>Examen {{index + 1}}</legend>
+              <div class="form-grid">
+                <mat-form-field class="full-width">
+                  <mat-label>Examen</mat-label>
+                  <mat-select formControlName="examId" (selectionChange)="selectExam(item)" required>
+                    @for (vendor of filteredVendors(); track vendor) {
+                      <mat-optgroup [label]="vendor">
+                        @for (exam of examsForVendor(vendor); track exam.id) {
+                          <mat-option [value]="exam.id">{{exam.code}} · {{exam.name}} · {{exam.basePrice | currency:'USD'}}</mat-option>
+                        }
+                      </mat-optgroup>
+                    }
+                  </mat-select>
+                  @if (filteredExams().length === 0) {<mat-hint>No hay resultados para los filtros seleccionados.</mat-hint>}
+                  <mat-error>Selecciona un examen.</mat-error>
+                </mat-form-field>
+                <div class="readonly-field"><span>Código</span><strong>{{examFor(item)?.code || 'Pendiente'}}</strong></div>
+                <div class="readonly-field"><span>Nombre</span><strong>{{examFor(item)?.name || 'Pendiente'}}</strong></div>
+                <div class="readonly-field"><span>Fabricante</span><strong>{{examFor(item)?.vendorName || 'Pendiente'}}</strong></div>
+                <div class="readonly-field"><span>Curso</span><strong>{{examFor(item)?.courseName || 'Pendiente'}}</strong></div>
+                <div class="readonly-field"><span>Costo base</span><strong>{{examFor(item) ? (examFor(item)!.basePrice | currency:'USD':'symbol-narrow':'1.2-2') : 'Pendiente'}}</strong></div>
+                <div class="readonly-field"><span>Moneda</span><strong>{{selectedLocation()?.code === 'MAD' ? 'EUR pendiente de backend' : (examFor(item)?.currency || 'Pendiente')}}</strong></div>
+                <div class="readonly-field"><span>Retake</span><strong>{{examFor(item)?.retake || 'Sin información'}}</strong></div>
+                <div class="readonly-field"><span>Comentarios</span><strong>{{examFor(item)?.comments || 'Sin comentarios'}}</strong></div>
+                <div class="readonly-field"><span>Cantidad calculada</span><strong>{{item.controls.participantIds.value.length}}</strong></div>
+                <mat-form-field class="full-width">
+                  <mat-label>Participantes asignados</mat-label>
+                  <mat-select formControlName="participantIds" multiple>
+                    @for (participant of participants.controls; track participant.controls.clientId.value) {
+                      <mat-option [value]="participant.controls.clientId.value">{{participant.controls.firstName.value || 'Sin nombre'}} {{participant.controls.lastName.value}} · {{participant.controls.email.value || 'Sin correo'}}</mat-option>
+                    }
+                  </mat-select>
+                  <mat-hint>Un participante asignado representa un voucher para esta línea.</mat-hint>
+                  <mat-error>Asigna al menos un participante.</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="line-footer">
+                <strong>Subtotal visual: {{lineTotal(item) | currency:(selectedLocation()?.code === 'MAD' ? 'EUR' : 'USD'):'symbol-narrow':'1.2-2'}}</strong>
+                <button mat-button type="button" color="warn" (click)="removeExamItem(index)" [disabled]="items.length === 1">Eliminar examen</button>
+              </div>
+            </fieldset>
+          }
+        </div>
+        @if (selectedLocation()?.code === 'MAD') {
+          <div class="warning-banner" role="alert">Madrid requiere conversión USD→EUR resuelta por el backend. Sin una tasa vigente no se puede validar ni enviar.</div>
+        }
+      </mat-card-content>
+    </mat-card>
+    }
+
+    @if (currentStep() === 1) {
+    <mat-card class="section-card">
+      <mat-card-header>
+        <div mat-card-avatar class="section-number" aria-hidden="true">3</div>
+        <mat-card-title>Participantes</mat-card-title>
+        <mat-card-subtitle>{{participants.length}} de 100 participantes registrados.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="section-toolbar">
+          <p>Captura correo corporativo. Un participante puede asignarse a varios exámenes.</p>
+          <button mat-stroked-button type="button" (click)="addParticipant()" [disabled]="participants.length >= 100">Agregar participante</button>
+        </div>
+        @if (pendingParticipantRemoval() !== null) {
+          <div class="warning-banner" role="alert">
+            <span>El participante tiene datos capturados. ¿Deseas eliminarlo?</span>
+            <button mat-button type="button" (click)="pendingParticipantRemoval.set(null)">Conservar</button>
+            <button mat-button type="button" color="warn" (click)="removeParticipant(pendingParticipantRemoval()!)">Eliminar</button>
+          </div>
+        }
+        <div formArrayName="participants" class="participants-list">
+          @for (participant of participants.controls; track participant.controls.clientId.value; let index = $index) {
+            <fieldset class="participant-row" [formGroupName]="index">
+              <legend>Participante {{index + 1}}</legend>
+              <div class="participant-grid">
+                <mat-form-field><mat-label>Nombre</mat-label><input matInput formControlName="firstName" maxlength="100"><mat-error>Este campo es obligatorio.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Primer apellido</mat-label><input matInput formControlName="lastName" maxlength="100"><mat-error>Este campo es obligatorio.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Segundo apellido (opcional)</mat-label><input matInput formControlName="secondLastName" maxlength="100"></mat-form-field>
+                <mat-form-field>
+                  <mat-label>Correo electrónico</mat-label><input matInput type="email" formControlName="email" maxlength="254">
+                  @if (isDuplicateEmail(index)) {<mat-error>Este correo ya está registrado.</mat-error>}
+                  @else if (participant.controls.email.hasError('email')) {<mat-error>El correo no tiene un formato válido.</mat-error>}
+                  @else {<mat-error>Este campo es obligatorio.</mat-error>}
+                </mat-form-field>
+                <button class="remove-button" mat-button type="button" color="warn" (click)="requestParticipantRemoval(index)" [attr.aria-label]="'Eliminar participante ' + (index + 1)">Eliminar</button>
+              </div>
+            </fieldset>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+
+    @if (currentStep() === 3) {
+    <mat-card class="section-card summary-card">
+      <mat-card-header>
+        <div mat-card-avatar class="section-number" aria-hidden="true">5</div>
+        <mat-card-title>Resumen</mat-card-title>
+        <mat-card-subtitle>Se actualiza conforme capturas la solicitud.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (!companyName() || items.length === 0 || items.at(0).controls.examId.value === '') {
+          <p class="empty-summary">Completa la información para visualizar el resumen.</p>
+        } @else {
+          <dl class="summary-grid">
+            <div><dt>Empresa</dt><dd>{{companyName()}}</dd></div>
+            <div><dt>Asesor Comercial</dt><dd>{{requester()?.name || 'No disponible'}}</dd></div>
+            <div><dt>Segmento</dt><dd>{{segmentName()}}</dd></div>
+            <div><dt>Ubicación</dt><dd>{{selectedLocation()?.code}} · {{selectedLocation()?.name}}</dd></div>
+            <div><dt>Participantes</dt><dd>{{participants.length}}</dd></div>
+            <div><dt>Exámenes</dt><dd>{{items.length}}</dd></div>
+            <div><dt>Referencia</dt><dd>{{form.controls.commercial.controls.billingReference.value || 'Sin referencia'}}</dd></div>
+          </dl>
+          <mat-divider></mat-divider>
+          @for (item of items.controls; track $index) {
+            <div class="summary-line"><span>{{examFor(item)?.vendorName}} · {{examFor(item)?.code}} · {{examFor(item)?.name}}</span><strong>{{item.controls.participantIds.value.length}} participantes · {{lineTotal(item) | currency:'USD'}}</strong></div>
+          }
+          <div class="grand-total"><span>Total visual antes de impuestos</span><strong>{{totalAmount() | currency:(selectedLocation()?.code === 'MAD' ? 'EUR' : 'USD'):'symbol-narrow':'1.2-2'}} {{selectedLocation()?.code === 'MAD' ? 'EUR' : 'USD'}}</strong></div>
+          <p class="authority-note">El backend es la fuente de verdad para precios, conversión y totales.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+    }
+
+    @if (cancelConfirmation()) {
+      <div class="warning-banner sticky-confirm" role="alert">
+        <span>Tienes cambios sin guardar. ¿Deseas limpiar la solicitud?</span>
+        <button mat-button type="button" (click)="cancelConfirmation.set(false)">Continuar editando</button>
+        <button mat-button type="button" color="warn" (click)="resetForm()">Descartar cambios</button>
+      </div>
+    }
+
+    <div class="action-bar" aria-label="Acciones de la solicitud">
+      <div class="draft-state">@if (draft()) {Borrador {{draft()!.id}} · versión {{draft()!.version}}} @else {Solicitud aún no guardada}</div>
+      <div class="action-buttons">
+        <button mat-button type="button" (click)="requestCancel()">Cancelar</button>
+        @if (currentStep() > 0) {
+          <button mat-button type="button" (click)="previousStep()">Anterior</button>
+        }
+        <button mat-stroked-button type="button" (click)="validateRequest()" [disabled]="validating() || submitting()">
+          @if (validating()) {<mat-spinner diameter="18"></mat-spinner>} Validar
+        </button>
+        <button mat-stroked-button type="button" (click)="saveDraft()" [disabled]="saving() || submitting()">
+          @if (saving()) {<mat-spinner diameter="18"></mat-spinner>} Guardar borrador
+        </button>
+        @if (currentStep() < 3) {
+          <button mat-flat-button color="primary" type="button" (click)="nextStep()">Continuar</button>
+        } @else {
+        <button mat-flat-button color="primary" type="button" (click)="send()" [disabled]="submitting() || saving() || form.invalid || selectedLocation()?.code === 'MAD'">
+          @if (submitting()) {<mat-spinner diameter="18"></mat-spinner>} Enviar a Facturación
+        </button>
+        }
+      </div>
+    </div>
+  </form>
+</main>

@@ -1,0 +1,96 @@
+.header-content,
+.shell {
+  width: min(100%, var(--container-max));
+  min-width: 0;
+  margin-inline: auto;
+}
+
+form,
+.section-card,
+.section-card mat-card-content,
+.participant-row,
+.exam-line {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.shell {
+  position: relative;
+  margin-top: calc(var(--spacing-6) * -1);
+  padding: 0 var(--spacing-6) 7.5rem;
+}
+
+.readonly-grid,
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-2) var(--spacing-6);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.participant-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: var(--spacing-3);
+  align-items: start;
+}
+
+.full-width { grid-column: 1 / -1; }
+.participants-list,
+.exam-lines { display: flex; flex-direction: column; gap: var(--spacing-4); }
+
+.section-toolbar,
+.line-footer,
+.summary-line,
+.grand-total,
+.action-bar,
+.action-buttons,
+.loading-row,
+.warning-banner,
+.development-banner,
+.error-summary {
+  display: flex;
+  align-items: center;
+}
+
+.section-toolbar,
+.line-footer,
+.summary-line,
+.grand-total,
+.action-bar { justify-content: space-between; }
+
+@media (max-width: 60rem) {
+  .readonly-grid,
+  .summary-grid,
+  .participant-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .action-bar { align-items: flex-start; flex-direction: column; }
+  .action-buttons { width: 100%; justify-content: flex-end; }
+}
+
+@media (max-width: 37.5rem) {
+  .shell { padding-inline: var(--spacing-4); padding-bottom: 9.375rem; }
+  .form-grid,
+  .filter-grid,
+  .participant-grid,
+  .readonly-grid,
+  .summary-grid { grid-template-columns: 1fr; }
+  .section-toolbar,
+  .line-footer,
+  .summary-line,
+  .grand-total,
+  .warning-banner { align-items: stretch; flex-direction: column; }
+  .action-buttons { display: grid; grid-template-columns: 1fr; }
+  .action-buttons button,
+  .section-toolbar button { width: 100%; }
+}

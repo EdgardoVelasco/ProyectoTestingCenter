@@ -12,3 +12,14 @@
 - Snapshots e histórico sobreviven cambios de catálogo y fallos de correo.
 - Quantity/participants y duplicidad interna/externa se prueban según configuración aprobada.
 - Formularios y catálogos son operables por teclado y 100 participantes/100 líneas cumplen el objetivo de rendimiento.
+- Ningún destinatario está codificado; submit resuelve en backend e ignora/rechaza destinatario cliente.
+- Regla, sede y aprobador quedan auditados/snapshot; cambios posteriores no alteran historia.
+- Sin regla/correo válido se bloquea enviar pero no guardar; fallo de correo no pierde solicitud.
+- No existen aprobación/rechazo ni compra dentro del portal, y Testing Center no aparece como reenviador.
+- Misma imagen frontend promovible; ninguna URL backend absoluta.
+- Runtime config público validado antes de MSAL, con `no-store` y sin secretos.
+- NGINX conserva `/api`, cubre SPA/502/504/headers/timeouts/límites y no reemplaza JWT backend.
+- `.env` ignorado, ejemplos ficticios y escaneos de bundle/runtime/logs sin secretos.
+- CORS productivo no requerido; `protectedResourceMap` probado contra versión MSAL fijada.
+- Incremento UPN/Empresa: pruebas de precedencia, no edición, normalización, snapshot, ausencia de catálogo y regresión de logout.
+- Incremento asesor: request sin campos de asesor, backend autoritativo, snapshots iguales a requester, UI read-only, resumen y ausencia de catálogo.

@@ -1,0 +1,3 @@
+package com.netec.exams.web;
+import jakarta.servlet.*;import jakarta.servlet.http.*;import java.io.IOException;import java.util.UUID;import org.springframework.stereotype.Component;import org.springframework.web.filter.OncePerRequestFilter;
+@Component public class CorrelationIdFilter extends OncePerRequestFilter{public static final String HEADER="X-Correlation-Id";@Override protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain)throws ServletException,IOException{String id=req.getHeader(HEADER);if(id==null||id.isBlank()||id.length()>128)id=UUID.randomUUID().toString();res.setHeader(HEADER,id);req.setAttribute(HEADER,id);chain.doFilter(req,res);}}

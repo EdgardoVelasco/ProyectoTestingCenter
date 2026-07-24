@@ -1,0 +1,2 @@
+package com.netec.exams.audit; import jakarta.persistence.*; import java.time.Instant; import java.util.UUID;
+@Entity @Table(name="audit_entry") public class AuditEntry {@Id private UUID id;@Column(nullable=false)private UUID aggregateId;@Column(nullable=false,length=128)private String actorId;@Column(nullable=false,length=40)private String action;@Column(nullable=false)private Instant occurredAt;protected AuditEntry(){}public AuditEntry(UUID x,String a,String action,Instant at){id=UUID.randomUUID();aggregateId=x;actorId=a;this.action=action;occurredAt=at;}}

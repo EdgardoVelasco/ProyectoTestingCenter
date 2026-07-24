@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment: {POSTGRES_DB: portal_examenes, POSTGRES_USER: portal, POSTGRES_PASSWORD: portal_local_only}
+    ports: ["5432:5432"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U portal -d portal_examenes"], interval: 5s, timeout: 3s, retries: 10}
+    volumes: ["portal-db:/var/lib/postgresql/data"]
+  backend:
+    build: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      DB_URL: "jdbc:postgresql://postgres:5432/portal_examenes"
+      DB_USER: portal
+      DB_PASSWORD: portal_local_only
+      ENTRA_TENANT_ID: ${TENANT_ID}
+      ENTRA_ISSUER_URI: https://login.microsoftonline.com/${TENANT_ID}/v2.0
+      ENTRA_ALLOWED_AUDIENCES: ${BACKEND_CLIENT_ID},api://${BACKEND_CLIENT_ID}
+    ports: ["8080:8080"]
+    depends_on: {postgres: {condition: service_healthy}}
+  frontend:
+    build: ./frontend
+    environment:
+      BACKEND_HOST: backend
+      BACKEND_PORT: "8080"
+      NGINX_LISTEN_PORT: "80"
+      NGINX_CLIENT_MAX_BODY_SIZE: "1m"
+      PROXY_CONNECT_TIMEOUT: "5s"
+      PROXY_SEND_TIMEOUT: "30s"
+      PROXY_READ_TIMEOUT: "30s"
+      ENTRA_TENANT_ID: ${TENANT_ID}
+      ENTRA_FRONTEND_CLIENT_ID: ${FRONTEND_CLIENT_ID}
+      ENTRA_BACKEND_SCOPE: ${BACKEND_SCOPE}
+      ENTRA_AUTHORITY: https://login.microsoftonline.com/${TENANT_ID}
+      ENTRA_REDIRECT_URI: ${FRONTEND_URL:-http://localhost:4200}
+      API_BASE_PATH: /api
+      ENVIRONMENT_NAME: development
+    ports: ["4200:80"]
+    depends_on: [backend]
+volumes: {portal-db: {}}

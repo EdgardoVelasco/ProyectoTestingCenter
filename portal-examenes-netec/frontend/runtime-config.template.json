@@ -1,0 +1,9 @@
+{
+  "entraTenantId": "${ENTRA_TENANT_ID}",
+  "entraFrontendClientId": "${ENTRA_FRONTEND_CLIENT_ID}",
+  "entraBackendScope": "${ENTRA_BACKEND_SCOPE}",
+  "entraAuthority": "${ENTRA_AUTHORITY}",
+  "entraRedirectUri": "${ENTRA_REDIRECT_URI}",
+  "apiBasePath": "${API_BASE_PATH}",
+  "environmentName": "${ENVIRONMENT_NAME}"
+}
