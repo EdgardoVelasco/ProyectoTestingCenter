@@ -307,6 +307,43 @@ Estado: **BLOCKED / NO IMPLEMENTACION**.
 Validaciones realizadas: commit base `22e56d0` preservado; no se modifico codigo Angular/Spring/NGINX/Docker ni migraciones; `.env` no se mostro ni se rastrea; no se crearon secretos ni destinatarios hardcodeados. La matriz, BDD, ADR, backlog y change log fueron actualizados para Etapa A.
 
 Decision de gobernanza: no iniciar implementacion ni enviar correo real hasta responder P-39 con la lista exacta de codigos LATAM (o aprobar expresamente un MVP sin CC). Se confirma adicionalmente el grupo Outlook de desarrollo en `specs/01-discovery/cc-group-evidence.md`; el dominio productivo sera configurable.
+## Validación Etapa B — contenido completo de correo — 2026-07-24
+
+Estado: **APPROVED / IMPLEMENTACIÓN PENDIENTE**.
+
+- Se inspeccionó el commit base `d44dd51`, el modelo N:M, los snapshots de precio/código/nombre/proveedor/retake/moneda y el Outbox existente.
+- No existe ambigüedad crítica sobre cantidades, asignaciones o monedas: se derivan de snapshots persistidos y se agrupan por ISO.
+- Brecha trazada: el Outbox actual contiene texto resumido y Graph envía únicamente `Text`; Etapa C debe introducir payload JSON estructurado, renderer HTML/text y mensaje multipart.
+- Se aprobaron BigDecimal, no mezcla de monedas, N/A para comerciales opcionales, escaping contextual, tablas Outlook, sin botones de aprobación y sin secretos.
+- Documentos nuevos: `email-content-requirements.md`, `email-content-model.md`, `email-style-guide.md`, `approval-email-content.feature`, ADR-056..060 y change log.
+
+| Severidad | Hallazgo | Estado |
+|---|---|---|
+| ALTO | `ExamRequest` no expone un folio persistido dedicado; Etapa C debe usar el contrato vigente o introducirlo antes de producción | Pendiente Etapa C |
+| MEDIO | No existe renderer HTML/text actual | Pendiente MAIL-CONTENT-003 |
+| MEDIO | Falta revisión visual en Outlook real | Pendiente MAIL-CONTENT-006 |
+
+No se modificó código, migraciones, permisos Graph ni configuración de secretos en esta etapa.
+
+## Validación Etapa C/D — contenido completo de correo — 2026-07-24
+
+Estado: **IMPLEMENTADO / PARCIALMENTE VERIFICADO**.
+
+- Build backend Docker: correcto (`mvn -DskipTests package`).
+- Prueba unitaria `ApprovalEmailTemplateRendererTest`: correcta.
+- HTML contiene tablas separadas de comerciales, participantes, exámenes, asignaciones y totales; texto plano se genera de forma independiente.
+- Payload estructurado se serializa en Outbox y el worker renderiza snapshots antes de Graph.
+- Escaping de etiquetas HTML y cálculo BigDecimal cubiertos por prueba unitaria.
+- Suite completa Spring no pudo finalizar porque el contenedor de pruebas Maven no tuvo acceso al socket Docker/Testcontainers; no se oculta como éxito.
+- No se ejecutó prueba real Graph/Outlook en esta etapa; no se afirma recepción ni compatibilidad visual real.
+
+| Severidad | Hallazgo | Estado |
+|---|---|---|
+| ALTO | Graph `sendMail` expone HTML; el endpoint no ofrece multipart text/plain nativo | HTML implementado; texto plano disponible en renderer/adaptadores futuros |
+| ALTO | No hay evidencia de recepción/revisión en Outlook DEV para este contenido | Pendiente prueba manual |
+| MEDIO | Suite Testcontainers requiere socket Docker disponible al proceso de pruebas | Pendiente entorno CI/DEV |
+| MEDIO | Folio dedicado aún no está persistido en `ExamRequest`; se usa ID como fallback compatible | Pendiente evolución de dominio |
+
 ## Correccion definitiva de enrutamiento DEV — 2026-07-24
 
 Estado: **BLOCKED BEFORE IMPLEMENTATION**.

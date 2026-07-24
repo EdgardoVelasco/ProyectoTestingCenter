@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 
 @Entity @Table(name="participant_exam_assignment")
-class ParticipantExamAssignment {
+public class ParticipantExamAssignment {
   @Id private UUID id;
   @Column(name="exam_request_id",nullable=false) private UUID examRequestId;
   @Column(name="participant_id",nullable=false) private UUID participantId;
@@ -33,5 +33,5 @@ class ParticipantExamAssignment {
     x.retakeSnapshot=exam.retake(); x.commentsSnapshot=exam.comments();
     x.createdAt=now; x.updatedAt=now; return x;
   }
+  public UUID id(){return id;} public UUID participantId(){return participantId;} public UUID examCatalogId(){return examCatalogId;} public BigDecimal unitPriceSnapshot(){return unitPriceSnapshot;} public String currencySnapshot(){return currencySnapshot;} public String examCodeSnapshot(){return examCodeSnapshot;} public String examNameSnapshot(){return examNameSnapshot;} public String vendorNameSnapshot(){return vendorNameSnapshot;} public String retakeSnapshot(){return retakeSnapshot;} public String commentsSnapshot(){return commentsSnapshot;}
 }
-

@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 
 @Entity @Table(name="exam_request_participant")
-class ExamRequestParticipant {
+public class ExamRequestParticipant {
   @Id private UUID id;
   @Column(name="exam_request_id",nullable=false) private UUID examRequestId;
   @Column(name="first_name",nullable=false,length=100) private String firstName;
@@ -33,5 +33,5 @@ class ExamRequestParticipant {
   }
   private static String clean(String value){return value==null||value.isBlank()?null:value.trim();}
   private static String value(String value){return value==null?"":value.trim();}
-  UUID id(){return id;} String normalizedEmail(){return normalizedEmail;}
+  public UUID id(){return id;} public String normalizedEmail(){return normalizedEmail;} public String originalEmail(){return originalEmail;} public String fullName(){return (firstName+" "+lastName+(secondLastName==null?"":" "+secondLastName)).trim();}
 }

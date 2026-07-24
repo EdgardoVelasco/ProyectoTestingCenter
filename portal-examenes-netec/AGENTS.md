@@ -104,3 +104,14 @@ Antes de cualquier cambio frontend: leer `specs/NETEC Manual de identidad corpor
 - Testing Center CC solo para codigos explicitamente aprobados; no inferir LATAM.
 - No usar cuentas productivas en DEV y no modificar permisos Azure automaticamente.
 - Actualizar plantilla, BDD y trazabilidad ante cambios de correo.
+
+## Contenido estructurado del correo
+
+- Construir `ApprovalEmailModel` inmutable; no pasar entidades JPA a plantillas.
+- Guardar payload estructurado en Outbox para que los reintentos sean inmutables.
+- Generar HTML y text/plain independientes; los estilos inline solo están permitidos dentro de la plantilla de correo.
+- Usar tablas y fallbacks de fuente compatibles con Outlook; no usar Grid, JavaScript ni CSS remoto.
+- Calcular cantidades desde asignaciones y precios con BigDecimal; nunca sumar monedas distintas.
+- Escapar todo contenido capturado y sanitizar el asunto contra saltos de línea.
+- No repetir bloques completos por participante; separar comerciales, participantes, exámenes, asignaciones y totales.
+- No incluir tokens, claims internos, IDs técnicos ni botones de aprobación/rechazo.

@@ -65,3 +65,7 @@ El usuario autenticado es también el Asesor Comercial. La UI lo muestra en modo
 El siguiente incremento sustituira el reenvio manual mediante Transactional Outbox y un adaptador Microsoft Graph app-only. La solicitud se persiste antes del envio y el frontend solo muestra estados. Las direcciones provienen de configuracion por sede, nunca de codigo.
 
 La Etapa A esta documentada, pero la implementacion permanece bloqueada por P-39: Discovery aun no identifica que codigos comprenden LATAM para la copia al grupo de Testing Center. Tambien deben verificarse manualmente permiso Graph, consentimiento, buzon de desarrollo y restricciones RBAC.
+
+## Contenido del correo de aprobación
+
+El incremento aprobado genera un modelo estructurado y un payload snapshot para renderizar HTML y texto plano. El correo separa información comercial, participantes, exámenes/costos, asignaciones y totales por moneda; no repite un bloque por participante, no mezcla monedas y no incluye acciones de aprobar/rechazar. La guía normativa está en `specs/07-notifications/email-content-model.md`, `email-style-guide.md` y ADR-056..060. La implementación y revisión visual de Outlook siguen pendientes.

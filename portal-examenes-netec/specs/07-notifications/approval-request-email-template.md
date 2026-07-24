@@ -1,16 +1,19 @@
 # Plantilla de solicitud de aprobación
 
-Estado: IN_REVIEW. Correos del destinatario confirmados; alcance exacto de la copia “LATAM” pendiente P-39.
+Estado: APPROVED para contenido estructurado (2026-07-24).
 
-Destinatario: aprobador resuelto por sede en backend. Configuración inicial: Felipe González `felipe.gonzalez@netec.com.co`, Angélica Barrón `angelica.barron@netec.com.mx`, Paola Galvis `paola.galvis@netec.com.co`. No se codifica ni se recibe del frontend.
+## Asunto
 
-Asunto: `[Solicitud de aprobación de examen] {folio} — {siteCode} — {companyName}`
+`[Solicitud de aprobación de exámenes] {folio} — {siteCode} — {companyName}`. El asunto se limita, escapa y rechaza saltos de línea.
 
-HTML y texto plano incluyen folio/fecha, solicitante/AC, sede, segmento, empresa, evento, tipo, referencia, observaciones, exámenes con costo base/precio venta/moneda/cantidad/subtotal, total y tabla mínima de participantes (número, nombre, correo). MAD muestra origen USD y conversión EUR aplicada. Todos los valores proceden de snapshots persistidos y se escapan según contexto.
+## Estructura
 
-No incluye IDs internos, país/ciudad ni datos innecesarios. El AC no recibe copia. Testing Center recibe copia mediante el grupo de usuarios del directorio `LATAM_Testing_Center@netec.com.mx` para “LATAM y MAD”; no se activa por código hasta resolver P-39. No se confirmó un buzón compartido adicional. La solicitud persistida es fuente oficial; el correo es derivado y tolera reintento.
-## Estado de implementacion
+El correo contiene encabezado NETEC textual/fallback, resumen, solicitante/Asesor Comercial combinado, información comercial, tabla de participantes, tabla de exámenes/costos agrupada por proveedor, tabla de asignaciones participante–examen, totales por código ISO de moneda, observaciones y aviso de revisión previa a compra. No repite un bloque completo por participante.
 
-Esta plantilla es normativa para el incremento propuesto y aun no esta conectada a Graph. Debe producirse en HTML y texto plano a partir de snapshots persistidos. Todo contenido de usuario se escapa; no se incluyen botones de aprobar/rechazar, tokens, claims internos ni URLs no aprobadas.
+Se generan HTML y `text/plain` desde un payload JSON estructurado del Outbox. Campos comerciales esperados nulos o vacíos muestran `N/A`; listas vacías omiten la sección. Las cantidades provienen de asignaciones únicas, los subtotales usan `BigDecimal` y monedas distintas nunca se suman.
 
-El destinatario es el aprobador resuelto por sede. El AC no recibe copia. La copia al grupo operativo de Testing Center solo puede activarse para codigos expresamente confirmados; P-39 mantiene bloqueado cualquier supuesto sobre LATAM.
+## Compatibilidad y seguridad
+
+HTML basado en tablas, ancho máximo aproximado de 720 px, Arial/Helvetica, estilos inline limitados al correo, sin JavaScript, Grid, Flexbox obligatorio, CSS remoto ni imágenes críticas. Todo texto de usuario se escapa; observaciones conservan saltos de línea seguros. No se incluyen tokens, claims internos, IDs técnicos, URLs no aprobadas ni botones de aprobar/rechazar.
+
+El modelo, snapshots y estrategia de render se detallan en `email-content-model.md`, `email-style-guide.md` y ADR-056..060.
