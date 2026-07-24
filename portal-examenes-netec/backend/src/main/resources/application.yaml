@@ -17,8 +17,15 @@ spring:
         jwt:
           issuer-uri: ${ENTRA_ISSUER_URI:https://login.microsoftonline.com/replace-me/v2.0}
 app:
+  notifications:
+    testing-center-cc-group: ${GRAPH_TESTING_CENTER_CC_GROUP:}
+    graph-base-url: ${GRAPH_BASE_URL:https://graph.microsoft.com/v1.0}
+    graph-mail-enabled: ${GRAPH_MAIL_ENABLED:false}
+    poll-interval-ms: ${NOTIFICATION_POLL_INTERVAL:30000}
   entra:
     tenant-id: ${ENTRA_TENANT_ID:replace-me}
+    backend-client-id: ${BACKEND_CLIENT_ID:}
+    backend-client-secret: ${ENTRA_BACKEND_CLIENT_SECRET:}
     allowed-audiences: ${ENTRA_ALLOWED_AUDIENCES:api://replace-me}
   authorization:
     allow-tenant-users: false

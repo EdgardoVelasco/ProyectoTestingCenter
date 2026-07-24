@@ -29,6 +29,7 @@ export interface Draft {
 
 export interface DraftInput {
   scheduledCourseCode: string | null;
+  siteCode: string | null;
   companyName: string | null;
   billingReference: string | null;
   observations: string | null;
@@ -69,5 +70,9 @@ export class ExamRequestApi {
     return this.http.put<Draft>(`${this.requestsBase}/${id}`, body, {
       headers: new HttpHeaders({'If-Match': `"${version}"`})
     });
+  }
+
+  submit(id: string): Observable<{id: string; status: string; site: string; approverName: string}> {
+    return this.http.post<{id: string; status: string; site: string; approverName: string}>(`${this.requestsBase}/${id}/submit`, {});
   }
 }

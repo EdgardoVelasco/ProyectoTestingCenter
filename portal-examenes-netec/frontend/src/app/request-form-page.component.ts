@@ -252,6 +252,7 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
     const commercial = this.form.controls.commercial.getRawValue();
     const body = {
       scheduledCourseCode: commercial.scheduledCourseCode || null,
+      siteCode: this.catalogs()?.locations.find(x => x.id === commercial.organizationalLocationId)?.code ?? null,
       companyName: this.companyName() || null,
       billingReference: commercial.billingReference || null,
       observations: commercial.observations || null,
@@ -307,8 +308,12 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$)).subscribe(confirmed => {
         if (!confirmed || this.submitting()) return;
         this.submitting.set(true);
-        this.workflow.submit().pipe(finalize(() => this.submitting.set(false)), takeUntil(this.destroyed$)).subscribe(() =>
-          this.snackBar.open('Envío simulado en modo desarrollo; no se notificó a Facturación.', 'Cerrar', {duration: 5000}));
+        const current = this.draft();
+        if (!current) { this.submitting.set(false); this.error.set('Guarda el borrador antes de enviarlo a aprobación.'); return; }
+        this.api.submit(current.id).pipe(finalize(() => this.submitting.set(false)), takeUntil(this.destroyed$)).subscribe({
+          next: result => this.snackBar.open(`Solicitud registrada. Estado: ${result.status}.`, 'Cerrar', {duration: 5000}),
+          error: response => this.error.set(response?.error?.detail ?? 'No fue posible registrar la solicitud para aprobación.')
+        });
       });
   }
 

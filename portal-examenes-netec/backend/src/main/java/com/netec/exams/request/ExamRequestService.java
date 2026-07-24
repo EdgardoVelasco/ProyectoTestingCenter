@@ -31,6 +31,7 @@ class ExamRequestService {
     var now=Instant.now(clock);x.apply(c,now);var saved=repository.saveAndFlush(x);syncDetails(id,c,now);
     audit.save(new AuditEntry(id,r.id(),"DRAFT_UPDATED",now));return ExamRequestView.from(saved);}
   @Transactional(readOnly=true)ExamRequestView get(UUID id,Requester r){return ExamRequestView.from(own(id,r));}
+  @Transactional(readOnly=true) ExamRequest entity(UUID id,Requester r){return own(id,r);}
   private ExamRequest own(UUID id,Requester r){return repository.findByIdAndRequesterId(id,r.id()).orElseThrow(NotFoundException::new);}
 
   private void syncDetails(UUID requestId,DraftCommand command,Instant now){

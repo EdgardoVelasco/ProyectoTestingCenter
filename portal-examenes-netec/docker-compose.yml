@@ -15,6 +15,12 @@ services:
       ENTRA_TENANT_ID: ${TENANT_ID}
       ENTRA_ISSUER_URI: https://login.microsoftonline.com/${TENANT_ID}/v2.0
       ENTRA_ALLOWED_AUDIENCES: ${BACKEND_CLIENT_ID},api://${BACKEND_CLIENT_ID}
+      BACKEND_CLIENT_ID: ${BACKEND_CLIENT_ID}
+      ENTRA_BACKEND_CLIENT_SECRET: ${ENTRA_BACKEND_CLIENT_SECRET}
+      GRAPH_BASE_URL: ${GRAPH_BASE_URL:-https://graph.microsoft.com/v1.0}
+      GRAPH_MAIL_ENABLED: ${GRAPH_MAIL_ENABLED:-false}
+      GRAPH_TESTING_CENTER_CC_GROUP: ${GRAPH_TESTING_CENTER_CC_GROUP}
+      NOTIFICATION_POLL_INTERVAL: ${NOTIFICATION_POLL_INTERVAL:-30000}
     ports: ["8080:8080"]
     depends_on: {postgres: {condition: service_healthy}}
   frontend:
