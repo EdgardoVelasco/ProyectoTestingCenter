@@ -1,4 +1,4 @@
-package com.netec.exams.request;
+package com.netec.exams.examrequest;
 
 import com.netec.exams.audit.*;
 import com.netec.exams.catalog.ExamCatalogRepository;

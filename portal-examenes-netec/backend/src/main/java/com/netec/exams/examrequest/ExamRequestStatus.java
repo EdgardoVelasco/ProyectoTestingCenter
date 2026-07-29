@@ -1,2 +1,2 @@
-package com.netec.exams.request;
+package com.netec.exams.examrequest;
 public enum ExamRequestStatus { BORRADOR, REGISTRADA, PENDIENTE_NOTIFICACION, ENVIADA_A_APROBADOR, ENVIADA_A_FACTURACION, CANCELADA }

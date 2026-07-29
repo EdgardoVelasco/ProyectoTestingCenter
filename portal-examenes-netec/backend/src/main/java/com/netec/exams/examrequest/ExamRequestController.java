@@ -1,4 +1,4 @@
-package com.netec.exams.request;
+package com.netec.exams.examrequest;
 
 import com.netec.exams.security.*; import com.netec.exams.notification.ApprovalNotificationService; import jakarta.validation.Valid; import java.net.URI; import java.security.Principal; import java.util.UUID;
 import org.springframework.http.*; import org.springframework.security.core.Authentication; import org.springframework.security.oauth2.jwt.Jwt; import org.springframework.web.bind.annotation.*;

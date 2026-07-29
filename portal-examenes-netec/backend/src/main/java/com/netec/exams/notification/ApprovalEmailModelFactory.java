@@ -1,6 +1,6 @@
 package com.netec.exams.notification;
 
-import com.netec.exams.request.*;
+import com.netec.exams.examrequest.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;

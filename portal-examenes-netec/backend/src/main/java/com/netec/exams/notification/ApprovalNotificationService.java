@@ -1,5 +1,5 @@
 package com.netec.exams.notification;
-import com.netec.exams.request.*; import java.time.*; import java.util.UUID; import org.springframework.beans.factory.annotation.Value; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netec.exams.examrequest.*; import java.time.*; import java.util.UUID; import org.springframework.beans.factory.annotation.Value; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import com.fasterxml.jackson.databind.ObjectMapper;
 @Service public class ApprovalNotificationService {
  private final ApprovalRoutingRuleRepository routes; private final NotificationOutboxRepository outbox; private final String cc; private final ApprovalEmailModelFactory factory; private final ObjectMapper mapper;
  public ApprovalNotificationService(ApprovalRoutingRuleRepository r,NotificationOutboxRepository o,@Value("${app.notifications.testing-center-cc-group:}") String cc,ApprovalEmailModelFactory factory,ObjectMapper mapper){routes=r;outbox=o;this.cc=cc;this.factory=factory;this.mapper=mapper;}

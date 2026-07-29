@@ -1,4 +1,4 @@
-package com.netec.exams.request;
+package com.netec.exams.examrequest;
 import jakarta.servlet.http.HttpServletRequest;import java.net.URI;import java.time.Instant;import java.util.*;import org.springframework.http.*;import org.springframework.orm.ObjectOptimisticLockingFailureException;import org.springframework.web.bind.MethodArgumentNotValidException;import org.springframework.web.bind.annotation.*;
 @RestControllerAdvice class ApiExceptionHandler {
  @ExceptionHandler(MethodArgumentNotValidException.class)ResponseEntity<ProblemDetail> validation(MethodArgumentNotValidException e,HttpServletRequest r){var p=problem(400,"VALIDATION_FAILED","La solicitud contiene datos inválidos",r);p.setProperty("fieldErrors",e.getBindingResult().getFieldErrors().stream().map(f->Map.of("field",f.getField(),"code","INVALID_VALUE","message",Objects.requireNonNullElse(f.getDefaultMessage(),"Valor inválido"))).toList());return ResponseEntity.badRequest().body(p);}

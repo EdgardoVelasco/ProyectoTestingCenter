@@ -1,4 +1,4 @@
-package com.netec.exams.request;
+package com.netec.exams.examrequest;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface ParticipantExamAssignmentRepository extends JpaRepository<ParticipantExamAssignment,UUID> {

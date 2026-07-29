@@ -1,4 +1,4 @@
-package com.netec.exams.request;
+package com.netec.exams.examrequest;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
