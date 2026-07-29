@@ -1,4 +1,6 @@
-package com.netec.exams.notification;
+package com.netec.exams.notification.infrastructure.template;
+
+import com.netec.exams.notification.application.ApprovalEmailModel;
 import java.math.BigDecimal; import java.text.NumberFormat; import java.util.Locale; import org.springframework.stereotype.Component;
 @Component public class ApprovalEmailTemplateRenderer {
  public RenderedEmail render(ApprovalEmailModel m){return new RenderedEmail(html(m),text(m));}

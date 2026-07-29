@@ -1,4 +1,4 @@
-package com.netec.exams.notification;
+package com.netec.exams.notification.application;
 
 import com.netec.exams.examrequest.*;
 import java.math.BigDecimal;

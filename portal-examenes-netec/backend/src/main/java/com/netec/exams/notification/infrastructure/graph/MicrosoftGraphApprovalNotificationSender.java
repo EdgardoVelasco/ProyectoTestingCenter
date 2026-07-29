@@ -1,4 +1,8 @@
-package com.netec.exams.notification;
+package com.netec.exams.notification.infrastructure.graph;
+
+import com.netec.exams.notification.application.ApprovalNotificationSender;
+import com.netec.exams.notification.infrastructure.outbox.NotificationOutbox;
+import com.netec.exams.notification.infrastructure.template.ApprovalEmailTemplateRenderer;
 import java.net.URI; import java.net.URLEncoder; import java.nio.charset.StandardCharsets; import java.util.Map; import org.springframework.beans.factory.annotation.Value; import org.springframework.http.MediaType; import org.springframework.stereotype.Component; import org.springframework.util.LinkedMultiValueMap; import org.springframework.web.client.RestClient;
 @Component class MicrosoftGraphApprovalNotificationSender implements ApprovalNotificationSender { private final RestClient http=RestClient.builder().build(); private final String tenant,clientId,secret,baseUrl; private final boolean enabled;
  MicrosoftGraphApprovalNotificationSender(@Value("${app.entra.tenant-id:}") String tenant,@Value("${app.entra.backend-client-id:}") String clientId,@Value("${app.entra.backend-client-secret:}") String secret,@Value("${app.notifications.graph-base-url:https://graph.microsoft.com/v1.0}") String baseUrl,@Value("${app.notifications.graph-mail-enabled:false}") boolean enabled){this.tenant=tenant;this.clientId=clientId;this.secret=secret;this.baseUrl=baseUrl;this.enabled=enabled;}

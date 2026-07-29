@@ -1,4 +1,4 @@
-package com.netec.exams.notification;
+package com.netec.exams.notification.application;
 
 import java.math.BigDecimal;
 import java.time.Instant;
