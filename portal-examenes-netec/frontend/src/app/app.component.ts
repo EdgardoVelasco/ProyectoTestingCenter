@@ -3,7 +3,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {RouterOutlet} from '@angular/router';
 import {AuthService} from './core/auth.service';
-import {AuthenticatedUserMenuComponent} from './authenticated-user-menu.component';
+import {AuthenticatedUserMenuComponent} from './core/layout/authenticated-user-menu.component';
 
 @Component({
   selector: 'app-root',

@@ -1,9 +1,9 @@
 import {Routes} from '@angular/router';
-import {AccessDeniedPageComponent} from './access-denied-page.component';
+import {AccessDeniedPageComponent} from './features/authentication/pages/access-denied-page.component';
 import {authGuard, loginGuard} from './core/auth.guard';
-import {LoginPageComponent} from './login-page.component';
-import {RequestFormPageComponent} from './request-form-page.component';
-import {SessionExpiredPageComponent} from './session-expired-page.component';
+import {LoginPageComponent} from './features/authentication/pages/login-page.component';
+import {RequestFormPageComponent} from './features/exam-requests/pages/request-form-page/request-form-page.component';
+import {SessionExpiredPageComponent} from './features/authentication/pages/session-expired-page.component';
 
 export const routes: Routes = [
   {path: 'login', component: LoginPageComponent, canActivate: [loginGuard]},

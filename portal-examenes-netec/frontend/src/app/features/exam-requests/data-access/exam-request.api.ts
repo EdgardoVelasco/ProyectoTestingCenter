@@ -2,8 +2,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {AuthenticatedIdentity} from './auth.service';
-import {RUNTIME_CONFIG, RuntimeConfig} from './runtime-config';
+import {AuthenticatedIdentity} from '../../../core/auth.service';
+import {RUNTIME_CONFIG, RuntimeConfig} from '../../../core/runtime-config';
 
 export interface Requester {
   id: string;

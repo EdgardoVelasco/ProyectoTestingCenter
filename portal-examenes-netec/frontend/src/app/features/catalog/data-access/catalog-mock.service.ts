@@ -1,8 +1,8 @@
 import {HttpClient} from '@angular/common/http';
 import {Inject, Injectable} from '@angular/core';
 import {forkJoin, map, Observable, of, switchMap} from 'rxjs';
-import {ExamCatalogItem, RequestCatalogs} from './catalog.models';
-import {RUNTIME_CONFIG, RuntimeConfig} from './runtime-config';
+import {ExamCatalogItem, RequestCatalogs} from '../domain/catalog.models';
+import {RUNTIME_CONFIG, RuntimeConfig} from '../../../core/runtime-config';
 
 interface CatalogPage {
   content: Array<{

@@ -4,9 +4,9 @@ import {HttpTestingController, provideHttpClientTesting} from '@angular/common/h
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
 import {RequestFormPageComponent} from './request-form-page.component';
-import {CatalogMockService} from './core/catalog-mock.service';
-import {RequestCatalogs} from './core/catalog.models';
-import {RUNTIME_CONFIG} from './core/runtime-config';
+import {CatalogMockService} from '../../../catalog/data-access/catalog-mock.service';
+import {RequestCatalogs} from '../../../catalog/domain/catalog.models';
+import {RUNTIME_CONFIG} from '../../../../core/runtime-config';
 
 const catalogs: RequestCatalogs = {
   courseTypes: [{id: 'course-digital', code: 'DIG', name: 'Digital'}],

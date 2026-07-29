@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
-import {AuthService} from './core/auth.service';
+import {AuthService} from '../../../core/auth.service';
 import {LoginPageComponent} from './login-page.component';
 
 describe('LoginPageComponent', () => {

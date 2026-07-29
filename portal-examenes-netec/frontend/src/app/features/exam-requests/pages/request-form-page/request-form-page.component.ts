@@ -11,13 +11,13 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {Subject, finalize, takeUntil} from 'rxjs';
-import {CatalogMockService} from './core/catalog-mock.service';
-import {ExamCatalogItem, RequestCatalogs} from './core/catalog.models';
-import {Draft, ExamRequestApi, Requester} from './core/exam-request.api';
-import {ExamRequestMockService} from './core/exam-request-mock.service';
-import {ConfirmationData, ConfirmationDialogComponent} from './confirmation-dialog.component';
-import {RequestRecoveryService} from './core/request-recovery.service';
-import {companyNameValidator, duplicateEmailsValidator, normalizeCompanyName, participantsQuantityValidator, positiveIntegerValidator, trimRequiredValidator} from './shared/form-validators';
+import {CatalogMockService} from '../../../catalog/data-access/catalog-mock.service';
+import {ExamCatalogItem, RequestCatalogs} from '../../../catalog/domain/catalog.models';
+import {Draft, ExamRequestApi, Requester} from '../../data-access/exam-request.api';
+import {ExamRequestMockService} from '../../data-access/exam-request-mock.service';
+import {ConfirmationData, ConfirmationDialogComponent} from '../../../../shared/ui/confirmation-dialog.component';
+import {RequestRecoveryService} from '../../../../core/request-recovery.service';
+import {companyNameValidator, duplicateEmailsValidator, normalizeCompanyName, participantsQuantityValidator, positiveIntegerValidator, trimRequiredValidator} from '../../../../shared/form-validators';
 
 type ParticipantForm = FormGroup<{
   clientId: FormControl<string>;
