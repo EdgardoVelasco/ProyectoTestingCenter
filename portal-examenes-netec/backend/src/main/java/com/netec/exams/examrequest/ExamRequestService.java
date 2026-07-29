@@ -1,8 +1,8 @@
 package com.netec.exams.examrequest;
 
 import com.netec.exams.audit.*;
-import com.netec.exams.catalog.ExamCatalogRepository;
-import com.netec.exams.catalog.ExamCatalogItem;
+import com.netec.exams.catalog.infrastructure.persistence.repository.ExamCatalogRepository;
+import com.netec.exams.catalog.infrastructure.persistence.entity.ExamCatalogItem;
 import java.time.*;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;

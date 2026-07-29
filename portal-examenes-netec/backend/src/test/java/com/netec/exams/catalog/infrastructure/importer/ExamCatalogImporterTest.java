@@ -1,4 +1,7 @@
-package com.netec.exams.catalog;
+package com.netec.exams.catalog.infrastructure.importer;
+
+import com.netec.exams.catalog.infrastructure.persistence.entity.ExamCatalogItem;
+import com.netec.exams.catalog.infrastructure.persistence.repository.ExamCatalogRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;

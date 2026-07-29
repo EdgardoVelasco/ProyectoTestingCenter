@@ -1,6 +1,6 @@
 package com.netec.exams.examrequest;
 
-import com.netec.exams.catalog.ExamCatalogItem;
+import com.netec.exams.catalog.infrastructure.persistence.entity.ExamCatalogItem;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Types;

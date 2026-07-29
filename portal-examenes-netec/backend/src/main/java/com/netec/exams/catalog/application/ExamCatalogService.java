@@ -1,4 +1,7 @@
-package com.netec.exams.catalog;
+package com.netec.exams.catalog.application;
+
+import com.netec.exams.catalog.infrastructure.persistence.entity.ExamCatalogItem;
+import com.netec.exams.catalog.infrastructure.persistence.repository.ExamCatalogRepository;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -70,5 +73,3 @@ public class ExamCatalogService {
 
   private static String clean(String value){return value==null||value.isBlank()?null:value.trim();}
 }
-
-class ExamCatalogNotFoundException extends RuntimeException {}

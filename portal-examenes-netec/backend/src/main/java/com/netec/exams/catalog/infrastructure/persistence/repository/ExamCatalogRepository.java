@@ -1,4 +1,6 @@
-package com.netec.exams.catalog;
+package com.netec.exams.catalog.infrastructure.persistence.repository;
+
+import com.netec.exams.catalog.infrastructure.persistence.entity.ExamCatalogItem;
 
 import java.util.List;
 import java.util.Optional;

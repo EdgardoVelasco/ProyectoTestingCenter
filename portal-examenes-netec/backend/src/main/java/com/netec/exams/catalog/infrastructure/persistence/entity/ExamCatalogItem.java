@@ -1,4 +1,4 @@
-package com.netec.exams.catalog;
+package com.netec.exams.catalog.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;

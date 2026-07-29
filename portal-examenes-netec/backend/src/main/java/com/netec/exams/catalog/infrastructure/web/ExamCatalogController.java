@@ -1,4 +1,8 @@
-package com.netec.exams.catalog;
+package com.netec.exams.catalog.infrastructure.web;
+
+import com.netec.exams.catalog.application.ExamCatalogService;
+import com.netec.exams.catalog.application.ExamCatalogNotFoundException;
+import com.netec.exams.catalog.application.ExamCatalogView;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,13 +38,3 @@ public class ExamCatalogController {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   void notFound(){}
 }
-
-record ExamCatalogView(
-    UUID id, String vendor, String courseName, String examCode, String examName,
-    String retake, BigDecimal baseCost, String baseCurrency, String comments, boolean active) {
-  static ExamCatalogView from(ExamCatalogItem item) {
-    return new ExamCatalogView(item.id(),item.vendor(),item.courseName(),item.examCode(),
-        item.examName(),item.retake(),item.baseCost(),item.baseCurrency(),item.comments(),item.active());
-  }
-}
-
