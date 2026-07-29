@@ -1,6 +1,6 @@
 import {CurrencyPipe} from '@angular/common';
 import {Component, OnDestroy, OnInit, computed, inject, signal} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
@@ -17,33 +17,8 @@ import {Draft, ExamRequestApi, Requester} from '../../data-access/exam-request.a
 import {ExamRequestMockService} from '../../data-access/exam-request-mock.service';
 import {ConfirmationData, ConfirmationDialogComponent} from '../../../../shared/ui/confirmation-dialog.component';
 import {RequestRecoveryService} from '../../../../core/request-recovery.service';
-import {companyNameValidator, duplicateEmailsValidator, normalizeCompanyName, participantsQuantityValidator, positiveIntegerValidator, trimRequiredValidator} from '../../../../shared/form-validators';
-
-type ParticipantForm = FormGroup<{
-  clientId: FormControl<string>;
-  firstName: FormControl<string>;
-  lastName: FormControl<string>;
-  secondLastName: FormControl<string>;
-  email: FormControl<string>;
-}>;
-
-type ItemForm = FormGroup<{
-  examId: FormControl<string>;
-  saleUnitPrice: FormControl<string>;
-  quantity: FormControl<number>;
-  participantIds: FormControl<string[]>;
-}>;
-
-interface RequestFormValue {
-  commercial: {
-    scheduledCourseCode: string | null; courseTypeId: string | null;
-    segmentId: string | null; organizationalLocationId: string | null; companyName: string | null;
-    billingReference: string | null; observations: string | null;
-  };
-  examFilters: {vendorId: string | null; technologyId: string | null; certificationId: string | null; query: string | null};
-  participants: Array<{clientId: string; firstName: string; lastName: string; secondLastName: string; email: string}>;
-  items: Array<{examId: string; saleUnitPrice: string; quantity: number; participantIds: string[]}>;
-}
+import {normalizeCompanyName} from '../../../../shared/form-validators';
+import {createExamItemForm, createExamRequestForm, createParticipantForm, ItemForm, ParticipantForm, RequestFormValue} from '../../forms/exam-request-form.factory';
 
 @Component({
   selector: 'app-request-form-page',
@@ -80,20 +55,7 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
   readonly maxVisitedStep = signal(0);
   readonly steps = ['Información comercial', 'Participantes', 'Exámenes', 'Resumen'];
 
-  readonly form = this.fb.group({
-    commercial: this.fb.group({
-      scheduledCourseCode: ['', [Validators.maxLength(80)]],
-      courseTypeId: [''],
-      segmentId: ['', [Validators.required]],
-      organizationalLocationId: ['', [Validators.required]],
-      companyName: ['', [Validators.required, trimRequiredValidator, companyNameValidator, Validators.maxLength(150)]],
-      billingReference: ['', [Validators.maxLength(250)]],
-      observations: ['', [Validators.maxLength(2000)]]
-    }),
-    examFilters: this.fb.group({vendorId: [''], technologyId: [''], certificationId: [''], query: ['']}),
-    participants: this.fb.array<ParticipantForm>([], [Validators.minLength(1), duplicateEmailsValidator]),
-    items: this.fb.array<ItemForm>([], [Validators.minLength(1)])
-  });
+  readonly form = createExamRequestForm(this.fb);
 
   readonly selectedLocation = computed(() => {
     this.uiRevision();
@@ -159,13 +121,7 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
 
   addParticipant(): void {
     if (this.participants.length >= 100) return;
-    this.participants.push(this.fb.group({
-      clientId: this.fb.nonNullable.control<string>(crypto.randomUUID()),
-      firstName: this.fb.nonNullable.control('', [Validators.required, trimRequiredValidator, Validators.maxLength(100)]),
-      lastName: this.fb.nonNullable.control('', [Validators.required, trimRequiredValidator, Validators.maxLength(100)]),
-      secondLastName: this.fb.nonNullable.control('', [Validators.maxLength(100)]),
-      email: this.fb.nonNullable.control('', [Validators.required, trimRequiredValidator, Validators.email, Validators.maxLength(254)])
-    }));
+    this.participants.push(createParticipantForm(this.fb));
     this.participants.updateValueAndValidity();
   }
 
@@ -186,13 +142,7 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
 
   addExamItem(): void {
     if (this.items.length >= 100) return;
-    const item = this.fb.group({
-      examId: this.fb.nonNullable.control('', [Validators.required]),
-      saleUnitPrice: this.fb.nonNullable.control('', [Validators.required, Validators.pattern(/^\d+(\.\d{1,4})?$/)]),
-      quantity: this.fb.nonNullable.control(1, [Validators.required, positiveIntegerValidator]),
-      participantIds: this.fb.nonNullable.control<string[]>([], [Validators.required])
-    });
-    item.addValidators(participantsQuantityValidator(this.participants));
+    const item = createExamItemForm(this.fb, this.participants);
     item.controls.participantIds.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(ids => {
       item.controls.quantity.setValue(ids.length, {emitEvent: false});
       item.updateValueAndValidity({emitEvent: false});
