@@ -1,6 +1,6 @@
 package com.netec.exams.notification.application;
 
-import com.netec.exams.notification.ApprovalRoutingRuleRepository;
+import com.netec.exams.approvalrouting.infrastructure.persistence.repository.ApprovalRoutingRuleRepository;
 import com.netec.exams.notification.infrastructure.outbox.NotificationOutbox;
 import com.netec.exams.notification.infrastructure.outbox.NotificationOutboxRepository;
 import com.netec.exams.examrequest.*; import java.time.*; import java.util.UUID; import org.springframework.beans.factory.annotation.Value; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import com.fasterxml.jackson.databind.ObjectMapper;
