@@ -1,6 +1,6 @@
 # Guía de estilo del correo
 
-Estado: APPROVED (2026-07-24).
+Estado: APPROVED (2026-07-24) para el contenido vigente.
 
 - HTML estructurado con tablas, ancho máximo aproximado de 720 px y estilos inline limitados al correo.
 - Arial, Helvetica, sans-serif; no depender de fuentes remotas.
@@ -12,3 +12,14 @@ Estado: APPROVED (2026-07-24).
 - No incluir tokens, claims internos, IDs técnicos, botones de aprobar/rechazar ni URLs no aprobadas.
 - Los estilos inline son una excepción documentada para compatibilidad Outlook; no habilitan inline styles en Angular.
 
+## Fase 1A — propuesta adicional
+
+Estado: PROPOSED / NOT_IMPLEMENTED. El primer cuadro de resumen debe estar
+centrado y permitir localizar folio, sede, solicitante, número de alumnos,
+número de exámenes y total. Los alumnos, exámenes, asignaciones y totales
+permanecen en tablas separadas para evitar repetición de bloques por participante.
+
+- Resaltar con jerarquía, etiquetas, negrita, bordes y fondos suaves; nunca solo con color.
+- Probar Outlook Web, escritorio y móvil, nombres largos, 100 alumnos, múltiples exámenes y monedas.
+- No mostrar AP y AC como identidades separadas hasta Fase 3.
+- No agregar botones Aprobar/Rechazar.
