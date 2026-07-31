@@ -34,4 +34,8 @@ validación manual.
 - `npm run build`: **PASÓ**, con advertencia de presupuesto inicial de bundle
   (1.02 MB frente a 750 KB).
 - `npm test -- --watch=false`: no ejecutable; Chrome no pudo iniciar por `spawn EPERM`.
-- Docker/Maven: pendiente; Docker Desktop no está disponible (`dockerDesktopLinuxEngine`).
+- Compilación Maven `mvn -DskipTests package`: **PASÓ** en Maven 3.9.11/Java 21.
+- `mvn test`: no concluyente; Testcontainers dentro del contenedor no tiene
+  `/var/run/docker.sock`, por lo que falla el contexto de integración.
+- Docker Compose/integración manual: pendiente de ejecutar con el socket y el
+  entorno completo disponibles.
