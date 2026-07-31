@@ -16,9 +16,26 @@ import {ExamCatalogItem, RequestCatalogs} from '../../../catalog/domain/catalog.
 import {Draft, ExamRequestApi, Requester} from '../../data-access/exam-request.api';
 import {ExamRequestMockService} from '../../data-access/exam-request-mock.service';
 import {ConfirmationData, ConfirmationDialogComponent} from '../../../../shared/ui/confirmation-dialog.component';
+import {SubmissionSuccessDialogComponent} from '../../../../shared/ui/submission-success-dialog.component';
 import {RequestRecoveryService} from '../../../../core/request-recovery.service';
 import {normalizeCompanyName} from '../../../../shared/form-validators';
 import {createExamItemForm, createExamRequestForm, createParticipantForm, ItemForm, ParticipantForm, RequestFormValue} from '../../forms/exam-request-form.factory';
+
+interface CsvParticipant {
+  clientId: string;
+  firstName: string;
+  lastName: string;
+  secondLastName: string;
+  email: string;
+}
+
+interface CsvPreview {
+  fileName: string;
+  found: number;
+  valid: number;
+  rows: CsvParticipant[];
+  errors: string[];
+}
 
 @Component({
   selector: 'app-request-form-page',
@@ -50,10 +67,13 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
   readonly validationAttempted = signal(false);
   readonly pendingParticipantRemoval = signal<number | null>(null);
   readonly cancelConfirmation = signal(false);
+  readonly csvPreview = signal<CsvPreview | null>(null);
+  readonly csvError = signal<string | null>(null);
   readonly uiRevision = signal(0);
   readonly currentStep = signal(0);
   readonly maxVisitedStep = signal(0);
   readonly steps = ['Información comercial', 'Participantes', 'Exámenes', 'Resumen'];
+  private idempotencyKey = crypto.randomUUID();
 
   readonly form = createExamRequestForm(this.fb);
 
@@ -123,6 +143,120 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
     if (this.participants.length >= 100) return;
     this.participants.push(createParticipantForm(this.fb));
     this.participants.updateValueAndValidity();
+  }
+
+  onCsvSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    this.csvError.set(null);
+    this.csvPreview.set(null);
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.csv') || file.type === 'application/vnd.ms-excel') {
+      this.csvError.set('Solo se aceptan archivos CSV.');
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      this.csvError.set('El archivo CSV no puede superar 1 MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => this.prepareCsvPreview(file.name, String(reader.result ?? ''));
+    reader.onerror = () => this.csvError.set('No fue posible leer el archivo CSV.');
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  downloadCsvTemplate(): void {
+    const blob = new Blob(['nombre,apellido_paterno,apellido_materno,correo_electronico\n'], {type: 'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'plantilla-alumnos.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  confirmCsvImport(): void {
+    const preview = this.csvPreview();
+    if (!preview || preview.errors.length) return;
+    const current = this.participants.controls.filter(person => this.hasParticipantData(person)).length;
+    if (current + preview.rows.length > 100) {
+      this.csvError.set(`La solicitud permite un máximo de 100 alumnos. Actualmente tienes ${current} alumnos y el archivo contiene ${preview.rows.length}.`);
+      return;
+    }
+    for (let index = this.participants.length - 1; index >= 0; index--) {
+      if (!this.hasParticipantData(this.participants.at(index))) this.participants.removeAt(index);
+    }
+    preview.rows.forEach(row => {
+      const participant = createParticipantForm(this.fb);
+      participant.patchValue(row);
+      this.participants.push(participant);
+    });
+    if (!this.participants.length) this.addParticipant();
+    this.participants.updateValueAndValidity();
+    this.csvPreview.set(null);
+  }
+
+  cancelCsvImport(): void {
+    this.csvPreview.set(null);
+    this.csvError.set(null);
+  }
+
+  private prepareCsvPreview(fileName: string, content: string): void {
+    const lines = content.replace(/^\uFEFF/, '').split(/\r?\n/).filter(line => line.trim().length > 0);
+    const expected = ['nombre', 'apellido_paterno', 'apellido_materno', 'correo_electronico'];
+    const headers = this.parseCsvLine(lines.shift() ?? '').map(value => value.trim().toLowerCase());
+    const errors: string[] = [];
+    if (headers.length !== expected.length || expected.some((value, index) => headers[index] !== value)) {
+      errors.push('Encabezados inválidos. Usa: nombre,apellido_paterno,apellido_materno,correo_electronico');
+    }
+    const rows: CsvParticipant[] = [];
+    const seen = new Set<string>();
+    lines.forEach((line, index) => {
+      const rowNumber = index + 2;
+      const values = this.parseCsvLine(line);
+      if (values.length !== expected.length) {
+        errors.push(`Fila ${rowNumber}: se esperaban ${expected.length} columnas.`);
+        return;
+      }
+      const [firstName, lastName, secondLastName, rawEmail] = values.map(value => value.trim());
+      const email = rawEmail.toLowerCase();
+      if (!firstName) errors.push(`Fila ${rowNumber} — nombre: el campo es obligatorio.`);
+      if (firstName.length > 100) errors.push(`Fila ${rowNumber} — nombre: máximo 100 caracteres.`);
+      if (!lastName) errors.push(`Fila ${rowNumber} — apellido_paterno: el campo es obligatorio.`);
+      if (lastName.length > 100) errors.push(`Fila ${rowNumber} — apellido_paterno: máximo 100 caracteres.`);
+      if (secondLastName.length > 100) errors.push(`Fila ${rowNumber} — apellido_materno: máximo 100 caracteres.`);
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push(`Fila ${rowNumber} — correo_electronico: el formato no es válido.`);
+      if (email.length > 254) errors.push(`Fila ${rowNumber} — correo_electronico: máximo 254 caracteres.`);
+      if (seen.has(email)) errors.push(`Fila ${rowNumber} — correo_electronico: el correo está duplicado en el archivo.`);
+      if (email) seen.add(email);
+      rows.push({clientId: crypto.randomUUID(), firstName, lastName, secondLastName, email});
+    });
+    const currentEmails = new Set(this.participants.controls.filter(person => this.hasParticipantData(person)).map(person => person.controls.email.value.trim().toLowerCase()));
+    rows.forEach((row, index) => {
+      if (currentEmails.has(row.email)) errors.push(`Fila ${index + 2} — correo_electronico: el correo ya existe en la solicitud.`);
+    });
+    if (rows.length > 100) errors.push('La solicitud permite un máximo de 100 alumnos.');
+    this.csvPreview.set({fileName, found: lines.length, valid: errors.length ? 0 : rows.length, rows, errors});
+  }
+
+  private parseCsvLine(line: string): string[] {
+    const values: string[] = [];
+    let value = '', quoted = false;
+    for (let index = 0; index < line.length; index++) {
+      const character = line[index];
+      if (character === '"' && line[index + 1] === '"' && quoted) { value += '"'; index++; continue; }
+      if (character === '"') { quoted = !quoted; continue; }
+      if (character === ',' && !quoted) { values.push(value); value = ''; continue; }
+      value += character;
+    }
+    values.push(value);
+    return values;
+  }
+
+  private hasParticipantData(person: ParticipantForm): boolean {
+    const value = person.getRawValue();
+    return [value.firstName, value.lastName, value.secondLastName, value.email].some(field => field.trim().length > 0);
   }
 
   requestParticipantRemoval(index: number): void {
@@ -260,8 +394,14 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
         this.submitting.set(true);
         const current = this.draft();
         if (!current) { this.submitting.set(false); this.error.set('Guarda el borrador antes de enviarlo a aprobación.'); return; }
-        this.api.submit(current.id).pipe(finalize(() => this.submitting.set(false)), takeUntil(this.destroyed$)).subscribe({
-          next: result => this.snackBar.open(`Solicitud registrada. Estado: ${result.status}.`, 'Cerrar', {duration: 5000}),
+        this.api.submit(current.id, this.idempotencyKey).pipe(finalize(() => this.submitting.set(false)), takeUntil(this.destroyed$)).subscribe({
+          next: result => {
+            this.resetForm();
+            this.dialog.open(SubmissionSuccessDialogComponent, {
+              data: {folio: result.id, status: result.status},
+              width: '520px', maxWidth: '95vw', autoFocus: 'first-tabbable'
+            });
+          },
           error: response => this.error.set(response?.error?.detail ?? 'No fue posible registrar la solicitud para aprobación.')
         });
       });
@@ -281,10 +421,13 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
     this.addExamItem();
     this.draft.set(null);
     this.error.set(null);
+    this.csvPreview.set(null);
+    this.csvError.set(null);
     this.validationAttempted.set(false);
     this.cancelConfirmation.set(false);
     this.currentStep.set(0);
     this.maxVisitedStep.set(0);
+    this.idempotencyKey = crypto.randomUUID();
     this.form.markAsPristine();
   }
 

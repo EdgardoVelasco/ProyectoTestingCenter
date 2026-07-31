@@ -72,7 +72,9 @@ export class ExamRequestApi {
     });
   }
 
-  submit(id: string): Observable<{id: string; status: string; site: string; approverName: string}> {
-    return this.http.post<{id: string; status: string; site: string; approverName: string}>(`${this.requestsBase}/${id}/submit`, {});
+  submit(id: string, idempotencyKey: string): Observable<{id: string; status: string; site: string; approverName: string}> {
+    return this.http.post<{id: string; status: string; site: string; approverName: string}>(`${this.requestsBase}/${id}/submit`, {}, {
+      headers: new HttpHeaders({'Idempotency-Key': idempotencyKey})
+    });
   }
 }
