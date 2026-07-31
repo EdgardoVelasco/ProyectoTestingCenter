@@ -59,6 +59,14 @@ El header utiliza `AuthenticatedUserMenuComponent`: identidad visible, avatar de
 
 ## Asesor Comercial en el MVP
 
+## Roadmap de nuevas fases — 2026-07-30
+
+Esta rama documenta, sin implementar, las Fases 1A y 1B: confirmación post-submit,
+reinicio seguro, término `Comercial` y carga CSV de alumnos con máximo 100. La
+Fase 2 de Facturación es la siguiente prioridad, seguida por AP–AC y catálogo
+fortalecido. Consultar `specs/10-planning/phased-roadmap.md` y no ejecutar
+implementación hasta aprobación del Spec.
+
 El usuario autenticado es también el Asesor Comercial. La UI lo muestra en modo de solo lectura y el backend lo resuelve desde el principal; no existe selector ni catálogo de asesores. Véase ADR-044.
 ## Notificaciones de aprobacion (propuesto)
 

@@ -19,7 +19,8 @@ Para pasar a APPROVED se requiere: identidad de quien aprueba, fecha, alcance ex
 ## Aprobación registrada
 
 El usuario responsable indicó “adelante prosigamos” tras recibir el paquete completo y la solicitud explícita de aprobación. Alcance autorizado: UI-004..007, incluyendo tokens, Montserrat local, tema Angular Material y migración controlada de la pantalla actual. No autoriza cambios funcionales ni modificación/reconstrucción del logotipo.
-# Paquete de enrutamiento de aprobación
+
+## Paquete de enrutamiento de aprobación
 
 | Paquete | Estado | Fecha | Autorización |
 |---|---|---|---|
@@ -27,7 +28,7 @@ El usuario responsable indicó “adelante prosigamos” tras recibir el paquete
 
 ## Configuración runtime
 
-| Paquete | Estado | Fecha | Autorización |
+| Paquete | Estado | Fecha | Nota |
 |---|---|---|---|
 | NFR-CONF/NFR-NGX/NFR-SEC, SEC-CONF y ADR-028..031 | APPROVED / IMPLEMENTADO | 2026-07-23 | Runtime config, NGINX same-origin y MSAL Angular 6.x implementados; AUTH-TEST-001 verifica bearer en `/api` y exclusión externa. |
 
@@ -37,3 +38,16 @@ El usuario responsable indicó “adelante prosigamos” tras recibir el paquete
 |---|---|---|---|
 | RF/RN/NFR-AUTH, RF/RN-UI, ADR-032..036, VAC/BDD login-stepper | APPROVED / IMPLEMENTACIÓN AUTORIZADA | 2026-07-23 | Usuario indicó “implementemos los cambios”; recuperación temporal allowlisted en sessionStorage con TTL. |
 | Logout, orden Participantes→Exámenes, catálogo y asignaciones; ADR-037..041 | APPROVED / IMPLEMENTACIÓN AUTORIZADA | 2026-07-23 | Solicitud explícita de ejecutar Etapa A y continuar Etapa B sin ambigüedad crítica. |
+
+## Nuevas fases 2026-07-30
+
+| Área | Estado | Nota |
+|---|---|---|
+| Fase 0 arquitectura | IN_PROGRESS | Refactor físico completado; límites profundos pendientes |
+| Fase 1A | READY_FOR_SPECIFICATION | Especificada; NOT_IMPLEMENTED |
+| Fase 1B | READY_FOR_SPECIFICATION | Especificada; NOT_IMPLEMENTED |
+| Fase 2 Facturación | NEEDS_DISCOVERY | HIGH_PRIORITY, no lista para implementación |
+| Fase 3 AP–AC | NEEDS_DISCOVERY | No lista para implementación |
+| Fase 4 catálogo | PRIORITY_BACKLOG | Requiere fuentes y gobernanza |
+
+Esta actualización no autoriza código, migraciones ni cambios de contrato.
