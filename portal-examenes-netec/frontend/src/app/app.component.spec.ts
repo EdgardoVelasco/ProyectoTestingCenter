@@ -4,7 +4,7 @@ import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
 import {By} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
-import {AuthenticatedUserMenuComponent} from './authenticated-user-menu.component';
+import {AuthenticatedUserMenuComponent} from './core/layout/authenticated-user-menu.component';
 import {AuthService} from './core/auth.service';
 
 describe('AppComponent header', () => {

@@ -1,5 +1,8 @@
 package com.netec.exams.notification;
 
+import com.netec.exams.notification.application.ApprovalEmailModel;
+import com.netec.exams.notification.infrastructure.template.ApprovalEmailTemplateRenderer;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;

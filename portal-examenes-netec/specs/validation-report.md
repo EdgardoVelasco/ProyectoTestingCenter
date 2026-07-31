@@ -353,3 +353,13 @@ Estado: **BLOCKED BEFORE IMPLEMENTATION**.
 - ALTO: admin consent, mail-enabled group, buzon remitente y RBAC requieren verificacion operacional.
 
 Se documentaron ADR-051, ADR-052, ADR-054 y ADR-055, snapshots, reglas RN-NOT-019..032, requisitos RF-NOT-017..030 y escenarios de las ocho sedes. No se modifico codigo ni se crearon migraciones.
+
+## Refactorización clean/modular
+
+La validación detallada de la rama `refactor/clean-modular-architecture` se
+encuentra en [validation-report-clean-architecture-refactor.md](validation-report-clean-architecture-refactor.md).
+Se reorganizaron físicamente los módulos de solicitudes, catálogo, routing,
+notificaciones y features Angular sin cambios funcionales. La compilación
+backend/frontend pasó en contenedores; las pruebas completas quedan pendientes
+por la ausencia de Docker socket para Testcontainers y ChromeHeadless para
+Karma.
