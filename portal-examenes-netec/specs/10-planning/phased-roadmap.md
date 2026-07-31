@@ -3,8 +3,8 @@
 | Fase | Objetivo | Estado | Prioridad |
 |---|---|---|---|
 | 0 | Reconciliación documental, arquitectura limpia, caracterización y contratos | IN_PROGRESS | Alta |
-| 1A | Confirmación post-submit, reinicio seguro, término Comercial y correo | READY_FOR_SPECIFICATION / NOT_IMPLEMENTED | Alta |
-| 1B | Importación CSV de alumnos, validación y edición | READY_FOR_SPECIFICATION / NOT_IMPLEMENTED | Alta |
+| 1A | Confirmación post-submit, reinicio seguro, término Comercial y correo | IN_PROGRESS / NOT_IMPLEMENTED | Alta |
+| 1B | Importación CSV de alumnos, validación y edición | IN_PROGRESS / NOT_IMPLEMENTED | Alta |
 | 2 | Bandeja y decisión de Facturación | NEEDS_DISCOVERY / NOT_READY_FOR_IMPLEMENTATION | HIGH_PRIORITY |
 | 3 | Separación Administrador de Proyectos–Asesor Comercial | NEEDS_DISCOVERY / NOT_READY_FOR_IMPLEMENTATION | Media |
 | 4 | Catálogo regional, precios, vigencias y revisión humana | PRIORITY_BACKLOG / NEEDS_DISCOVERY | Estratégica |

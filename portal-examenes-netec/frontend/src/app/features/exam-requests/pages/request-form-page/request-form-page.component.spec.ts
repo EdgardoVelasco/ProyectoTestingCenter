@@ -10,7 +10,7 @@ import {RUNTIME_CONFIG} from '../../../../core/runtime-config';
 
 const catalogs: RequestCatalogs = {
   courseTypes: [{id: 'course-digital', code: 'DIG', name: 'Digital'}],
-  segments: [{id: 'segment-cn', code: 'CN', name: 'Cuentas Nombradas'}],
+  segments: [{id: 'segment-cn', code: 'CN', name: 'Comercial'}],
   locations: [{id: 'location-bog', code: 'BOG', name: 'Bogotá'}, {id: 'location-mad', code: 'MAD', name: 'Madrid'}],
   vendors: [{id: 'vendor-microsoft', code: 'MS', name: 'Microsoft'}],
   technologies: [{id: 'technology-azure', code: 'AZURE', name: 'Azure'}],

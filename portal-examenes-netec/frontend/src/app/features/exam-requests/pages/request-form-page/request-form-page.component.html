@@ -218,7 +218,29 @@
         <div class="section-toolbar">
           <p>Captura correo corporativo. Un participante puede asignarse a varios exámenes.</p>
           <button mat-stroked-button type="button" (click)="addParticipant()" [disabled]="participants.length >= 100">Agregar participante</button>
+          <button mat-stroked-button type="button" (click)="csvInput.click()" [disabled]="participants.length >= 100">Cargar alumnos desde CSV</button>
+          <button mat-button type="button" (click)="downloadCsvTemplate()">Descargar plantilla CSV</button>
+          <input #csvInput type="file" accept=".csv,text/csv" hidden (change)="onCsvSelected($event)">
         </div>
+        @if (csvError(); as csvMessage) {
+          <div class="warning-banner" role="alert">{{csvMessage}}</div>
+        }
+        @if (csvPreview(); as preview) {
+          <section class="csv-preview" aria-labelledby="csv-preview-title">
+            <h3 id="csv-preview-title">Vista previa de importación</h3>
+            <p>Archivo: {{preview.fileName}}</p>
+            <p>Registros encontrados: {{preview.found}} · Registros válidos: {{preview.valid}} · Registros con error: {{preview.errors.length}}</p>
+            @if (preview.errors.length) {
+              <ul class="csv-errors" role="alert">
+                @for (message of preview.errors; track message) { <li>{{message}}</li> }
+              </ul>
+            } @else {
+              <p>Total actual: {{participants.length}} · Total después de importar: {{participants.length + preview.rows.length}}</p>
+            }
+            <button mat-flat-button color="primary" type="button" (click)="confirmCsvImport()" [disabled]="preview.errors.length > 0">Confirmar importación</button>
+            <button mat-button type="button" (click)="cancelCsvImport()">Cancelar</button>
+          </section>
+        }
         @if (pendingParticipantRemoval() !== null) {
           <div class="warning-banner" role="alert">
             <span>El participante tiene datos capturados. ¿Deseas eliminarlo?</span>

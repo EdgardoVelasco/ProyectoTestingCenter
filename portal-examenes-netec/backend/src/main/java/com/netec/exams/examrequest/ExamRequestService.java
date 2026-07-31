@@ -35,6 +35,7 @@ class ExamRequestService {
   private ExamRequest own(UUID id,Requester r){return repository.findByIdAndRequesterId(id,r.id()).orElseThrow(NotFoundException::new);}
 
   private void syncDetails(UUID requestId,DraftCommand command,Instant now){
+    if(command.safeParticipants().size() > 100) throw new InvalidDraftException();
     Set<UUID> ids=new HashSet<>();Set<String> emails=new HashSet<>();
     var people=new ArrayList<ExamRequestParticipant>();
     for(var input:command.safeParticipants()){

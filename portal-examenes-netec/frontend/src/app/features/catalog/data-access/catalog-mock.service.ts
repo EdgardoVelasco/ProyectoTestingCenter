@@ -15,7 +15,7 @@ interface CatalogPage {
 
 const COMMERCIAL = {
   courseTypes: [{id:'course-na',code:'NA',name:'N/A'},{id:'course-intensive',code:'INT',name:'Intensivo'},{id:'course-digital',code:'DIG',name:'Digital'}],
-  segments: [{id:'segment-cn',code:'CN',name:'Cuentas Nombradas'}],
+  segments: [{id:'segment-cn',code:'CN',name:'Comercial'}],
   locations: [
     {id:'location-bog',code:'BOG',name:'Bogotá'},{id:'location-med',code:'MED',name:'Medellín'},
     {id:'location-wtc',code:'WTC',name:'México'},{id:'location-scl',code:'SCL',name:'Chile'},
