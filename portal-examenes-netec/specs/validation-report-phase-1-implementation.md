@@ -27,8 +27,11 @@ validación manual.
 - Prueba manual de submit, diálogo, reinicio y Outbox.
 - Validación responsive y accesibilidad.
 
-## Bloqueo técnico actual
+## Resultados actualizados
 
-Docker no respondió por ausencia del pipe `dockerDesktopLinuxEngine`; el build
-local de Angular tampoco pudo iniciar porque falta el paquete builder de
-Angular en `node_modules`. No se ocultó este fallo.
+- `npm ci --ignore-scripts`: completado; reportó 19 vulnerabilidades de auditoría
+  de dependencias existentes.
+- `npm run build`: **PASÓ**, con advertencia de presupuesto inicial de bundle
+  (1.02 MB frente a 750 KB).
+- `npm test -- --watch=false`: no ejecutable; Chrome no pudo iniciar por `spawn EPERM`.
+- Docker/Maven: pendiente; Docker Desktop no está disponible (`dockerDesktopLinuxEngine`).
