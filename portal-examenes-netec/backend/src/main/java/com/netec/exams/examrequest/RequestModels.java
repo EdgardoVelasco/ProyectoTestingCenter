@@ -11,10 +11,12 @@ record ParticipantInput(UUID id,@Size(max=100) String firstName,
     @Size(max=254) String email,@Size(max=80) String externalParticipantId,
     @Size(min=2,max=2) String country,@Size(max=120) String city) {}
 record ExamAssignmentInput(UUID examCatalogId,@Size(min=1,max=100) List<UUID> participantIds) {}
-record DraftCommand(@Size(max=80) String scheduledCourseCode,@Size(max=20) String siteCode,String companyName,@Size(max=250) String billingReference,
+record DraftCommand(@Size(max=80) String scheduledCourseCode,@Size(max=20) String siteCode,
+    @Size(max=120) String courseType,@Size(max=120) String segment,@Size(max=160) String costCenter,
+    String companyName,@Size(max=250) String billingReference,
     @Size(max=2000) String observations,@Valid @Size(max=100) List<ParticipantInput> participants,
     @Valid @Size(max=100) List<ExamAssignmentInput> examAssignments) {
-  DraftCommand(String scheduledCourseCode,String companyName,String billingReference,String observations,List<ParticipantInput> participants,List<ExamAssignmentInput> examAssignments){this(scheduledCourseCode,null,companyName,billingReference,observations,participants,examAssignments);}
+  DraftCommand(String scheduledCourseCode,String companyName,String billingReference,String observations,List<ParticipantInput> participants,List<ExamAssignmentInput> examAssignments){this(scheduledCourseCode,null,null,null,null,companyName,billingReference,observations,participants,examAssignments);}
   List<ParticipantInput> safeParticipants(){return participants==null?List.of():participants;}
   List<ExamAssignmentInput> safeAssignments(){return examAssignments==null?List.of():examAssignments;}
 }

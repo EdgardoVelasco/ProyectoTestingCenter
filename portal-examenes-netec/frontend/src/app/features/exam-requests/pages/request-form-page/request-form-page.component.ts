@@ -334,9 +334,15 @@ export class RequestFormPageComponent implements OnInit, OnDestroy {
     this.error.set(null);
     this.saving.set(true);
     const commercial = this.form.controls.commercial.getRawValue();
+    const courseType = this.catalogs()?.courseTypes.find(x => x.id === commercial.courseTypeId);
+    const segment = this.catalogs()?.segments.find(x => x.id === commercial.segmentId);
+    const location = this.catalogs()?.locations.find(x => x.id === commercial.organizationalLocationId);
     const body = {
       scheduledCourseCode: commercial.scheduledCourseCode || null,
-      siteCode: this.catalogs()?.locations.find(x => x.id === commercial.organizationalLocationId)?.code ?? null,
+      siteCode: location?.code ?? null,
+      courseType: courseType?.name ?? null,
+      segment: segment ? `${segment.code} · ${segment.name}` : null,
+      costCenter: location ? `${location.code} · ${location.name}` : null,
       companyName: this.companyName() || null,
       billingReference: commercial.billingReference || null,
       observations: commercial.observations || null,

@@ -1,5 +1,13 @@
 # Validation report — Fase 1 implementación
 
+## Evidencia Docker Desktop
+
+- `docker compose up -d --build`: PASÓ; backend, frontend y PostgreSQL
+  iniciaron correctamente.
+- Flyway validó 6 migraciones y el esquema se encuentra actualizado.
+- Smoke check local: `http://localhost:4200` y
+  `http://localhost:8080/actuator/health` respondieron HTTP 200.
+
 ## Estado
 
 Implementación parcial en `feat/phase-1a-1b-implementation`. No se declara
@@ -39,3 +47,6 @@ validación manual.
   `/var/run/docker.sock`, por lo que falla el contexto de integración.
 - Docker Compose/integración manual: pendiente de ejecutar con el socket y el
   entorno completo disponibles.
+- CorrecciÃ³n aplicada: `courseType`, `segment` y `costCenter` ahora forman
+  parte del contrato, se persisten como snapshots y son utilizados por el
+  modelo del correo; la migraciÃ³n Flyway V7 fue aplicada correctamente.

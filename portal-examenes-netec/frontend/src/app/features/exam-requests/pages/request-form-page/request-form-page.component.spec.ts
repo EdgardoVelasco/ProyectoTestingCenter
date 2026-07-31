@@ -141,7 +141,7 @@ describe('RequestFormPageComponent', () => {
     component.form.controls.commercial.patchValue({scheduledCourseCode: 'EVT-1', billingReference: 'OF-1', observations: 'Nota'});
     component.saveDraft();
     const request = http.expectOne('/api/v1/exam-requests');
-    expect(request.request.body).toEqual({scheduledCourseCode: 'EVT-1', siteCode: null, companyName: null, billingReference: 'OF-1', observations: 'Nota', participants: [], examAssignments: []});
+    expect(request.request.body).toEqual({scheduledCourseCode: 'EVT-1', siteCode: null, courseType: null, segment: null, costCenter: null, companyName: null, billingReference: 'OF-1', observations: 'Nota', participants: [], examAssignments: []});
     expect(request.request.body.requester).toBeUndefined();
     expect(request.request.body.salesAdvisorId).toBeUndefined();
     expect(request.request.body.salesAdvisorName).toBeUndefined();

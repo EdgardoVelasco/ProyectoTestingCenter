@@ -30,6 +30,9 @@ export interface Draft {
 export interface DraftInput {
   scheduledCourseCode: string | null;
   siteCode: string | null;
+  courseType: string | null;
+  segment: string | null;
+  costCenter: string | null;
   companyName: string | null;
   billingReference: string | null;
   observations: string | null;

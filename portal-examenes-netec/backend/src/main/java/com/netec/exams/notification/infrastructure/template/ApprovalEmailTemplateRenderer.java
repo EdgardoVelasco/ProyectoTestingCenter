@@ -1,20 +1,61 @@
 package com.netec.exams.notification.infrastructure.template;
 
 import com.netec.exams.notification.application.ApprovalEmailModel;
-import java.math.BigDecimal; import java.text.NumberFormat; import java.util.Locale; import org.springframework.stereotype.Component;
-@Component public class ApprovalEmailTemplateRenderer {
- public RenderedEmail render(ApprovalEmailModel m){return new RenderedEmail(html(m),text(m));}
- private String html(ApprovalEmailModel m){
-  var b=new StringBuilder("<html><body style=\"font-family:Arial,Helvetica,sans-serif;color:#333;background:#f4f7fb\"><table role=\"presentation\" width=\"100%\"><tr><td align=\"center\"><table role=\"presentation\" width=\"720\" style=\"max-width:720px;background:#fff\"><tr><td style=\"background:#02419F;color:#fff;padding:24px\"><h1>NETEC</h1><h2>Solicitud de aprobación de exámenes</h2><p>Folio: ").append(e(m.request().folio())).append("<br>Sede: ").append(e(m.request().siteCode())).append("<br>Estado: ").append(e(m.request().status())).append("<br>Aprobador: ").append(e(m.request().approverName())).append("</p></td></tr><tr><td style=\"padding:24px\"><h3>Resumen</h3><p>Solicitante / Asesor Comercial: ").append(e(m.requester().name())).append("<br>").append(e(m.requester().upn())).append("</p><h3>Información comercial</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tbody>");
-  row(b,"Clave de curso programado",m.commercial().scheduledCourseCode()); row(b,"Tipo de curso",m.commercial().courseType()); row(b,"Segmento",m.commercial().segment()); row(b,"Centro de costos o sucursal",m.commercial().costCenter()); row(b,"Empresa",m.commercial().company()); row(b,"Referencia de facturación",m.commercial().billingReference()); b.append("</tbody></table>");
-  b.append("<h3>Participantes</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>#</th><th>Nombre</th><th>Correo</th></tr>"); for(var p:m.participants()) b.append("<tr><td>").append(p.number()).append("</td><td>").append(e(p.name())).append("</td><td>").append(e(p.email())).append("</td></tr>"); b.append("</table>");
-  b.append("<h3>Exámenes y costos</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Proveedor</th><th>Código</th><th>Examen</th><th>Retake</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th></tr>"); for(var x:m.exams()) b.append("<tr><td>").append(e(x.vendor())).append("</td><td>").append(e(x.code())).append("</td><td>").append(e(x.name())).append("</td><td>").append(e(x.retake())).append("</td><td>").append(money(x.unitPrice(),x.currency())).append("</td><td>").append(x.quantity()).append("</td><td>").append(money(x.subtotal(),x.currency())).append("</td></tr>"); b.append("</table>");
-  b.append("<h3>Asignaciones participante–examen</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Participante</th><th>Correo</th><th>Código</th><th>Examen</th><th>Precio</th></tr>"); for(var a:m.assignments()) b.append("<tr><td>").append(e(a.participant())).append("</td><td>").append(e(a.email())).append("</td><td>").append(e(a.code())).append("</td><td>").append(e(a.exam())).append("</td><td>").append(money(a.unitPrice(),a.currency())).append("</td></tr>"); b.append("</table><h3>Totales</h3><ul>"); for(var t:m.totals()) b.append("<li>Total ").append(e(t.currency())).append(": ").append(money(t.total(),t.currency())).append("</li>");
-  return b.append("</ul><h3>Observaciones</h3><p>").append(e(m.observations()).replace("\n","<br>")).append("</p><p>Esta solicitud requiere revisión y aprobación antes de continuar con la compra de los exámenes.</p><hr><small>Correo generado automáticamente por Portal de Registro de Exámenes NETEC.</small></td></tr></table></td></tr></table></body></html>").toString();
- }
- private String text(ApprovalEmailModel m){var b=new StringBuilder("SOLICITUD DE APROBACIÓN DE EXÁMENES\n\nFolio: ").append(m.request().folio()).append("\nSede: ").append(m.request().siteCode()).append("\nEstado: ").append(m.request().status()).append("\nSolicitante / AC: ").append(m.requester().name()).append("\nUPN: ").append(m.requester().upn()).append("\n\nINFORMACIÓN COMERCIAL\nEmpresa: ").append(m.commercial().company()).append("\nClave de curso programado: ").append(m.commercial().scheduledCourseCode()).append("\nReferencia de facturación: ").append(m.commercial().billingReference()).append("\n\nPARTICIPANTES\n"); for(var p:m.participants()) b.append(p.number()).append(". ").append(p.name()).append(" — ").append(p.email()).append('\n'); b.append("\nEXÁMENES\n"); int i=1; for(var x:m.exams()) b.append(i++).append(". ").append(x.code()).append(" — ").append(x.name()).append(" — ").append(money(x.unitPrice(),x.currency())).append(" × ").append(x.quantity()).append(" = ").append(money(x.subtotal(),x.currency())).append('\n'); b.append("\nASIGNACIONES\n"); for(var a:m.assignments()) b.append(a.participant()).append(" → ").append(a.code()).append('\n'); b.append("\nTOTALES\n"); for(var t:m.totals()) b.append("TOTAL ").append(t.currency()).append(": ").append(money(t.total(),t.currency())).append('\n'); return b.append("\nOBSERVACIONES\n").append(m.observations()).append("\n\nRequiere revisión y aprobación antes de la compra.\n").toString();}
- private static void row(StringBuilder b,String k,String v){b.append("<tr><th align=\"left\">").append(e(k)).append("</th><td>").append(e(v)).append("</td></tr>");}
- private static String e(String s){return s==null?"N/A":s.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("\"","&quot;").replace("'","&#39;");}
- private static String money(BigDecimal n,String c){return n==null?"N/A":NumberFormat.getNumberInstance(Locale.US).format(n)+" "+c;}
- public record RenderedEmail(String html,String text){}
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ApprovalEmailTemplateRenderer {
+  public RenderedEmail render(ApprovalEmailModel model) {
+    return new RenderedEmail(html(model), text(model));
+  }
+
+  private String html(ApprovalEmailModel m) {
+    var b = new StringBuilder("<html><body style=\"font-family:Arial,Helvetica,sans-serif;color:#333;background:#f4f7fb\"><table role=\"presentation\" width=\"100%\"><tr><td align=\"center\"><table role=\"presentation\" width=\"720\" style=\"max-width:720px;background:#fff\"><tr><td style=\"background:#02419F;color:#fff;padding:24px\"><h1>NETEC</h1><h2>Solicitud de aprobación de exámenes</h2><p>Folio: ")
+        .append(e(m.request().folio())).append("<br>Sede: ").append(e(m.request().siteCode()))
+        .append("<br>Estado: ").append(e(m.request().status())).append("<br>Aprobador: ")
+        .append(e(m.request().approverName())).append("</p></td></tr><tr><td style=\"padding:24px\"><h3>Resumen</h3><p>Solicitante / Asesor Comercial: ")
+        .append(e(m.requester().name())).append("<br>").append(e(m.requester().upn()))
+        .append("</p><h3>Información comercial</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tbody>");
+    row(b, "Clave de curso programado", m.commercial().scheduledCourseCode());
+    row(b, "Tipo de curso", m.commercial().courseType());
+    row(b, "Segmento", m.commercial().segment());
+    row(b, "Centro de costos o sucursal", m.commercial().costCenter());
+    row(b, "Empresa", m.commercial().company());
+    row(b, "Referencia de facturación", m.commercial().billingReference());
+    b.append("</tbody></table><h3>Participantes</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>#</th><th>Nombre</th><th>Correo</th></tr>");
+    for (var p : m.participants()) b.append("<tr><td>").append(p.number()).append("</td><td>").append(e(p.name())).append("</td><td>").append(e(p.email())).append("</td></tr>");
+    b.append("</table><h3>Exámenes y costos</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Proveedor</th><th>Código</th><th>Examen</th><th>Retake</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th></tr>");
+    for (var x : m.exams()) b.append("<tr><td>").append(e(x.vendor())).append("</td><td>").append(e(x.code())).append("</td><td>").append(e(x.name())).append("</td><td>").append(e(x.retake())).append("</td><td>").append(money(x.unitPrice(), x.currency())).append("</td><td>").append(x.quantity()).append("</td><td>").append(money(x.subtotal(), x.currency())).append("</td></tr>");
+    b.append("</table><h3>Asignaciones participante-examen</h3><table border=\"1\" cellpadding=\"6\" cellspacing=\"0\"><tr><th>Participante</th><th>Correo</th><th>Código</th><th>Examen</th><th>Precio</th></tr>");
+    for (var a : m.assignments()) b.append("<tr><td>").append(e(a.participant())).append("</td><td>").append(e(a.email())).append("</td><td>").append(e(a.code())).append("</td><td>").append(e(a.exam())).append("</td><td>").append(money(a.unitPrice(), a.currency())).append("</td></tr>");
+    b.append("</table><h3>Totales</h3><ul>");
+    for (var t : m.totals()) b.append("<li>Total ").append(e(t.currency())).append(": ").append(money(t.total(), t.currency())).append("</li>");
+    return b.append("</ul><h3>Observaciones</h3><p>").append(e(m.observations()).replace("\n", "<br>")).append("</p><p>Esta solicitud requiere revisión y aprobación antes de continuar con la compra de los exámenes.</p><hr><small>Correo generado automáticamente por Portal de Registro de Exámenes NETEC.</small></td></tr></table></td></tr></table></body></html>").toString();
+  }
+
+  private String text(ApprovalEmailModel m) {
+    var b = new StringBuilder("SOLICITUD DE APROBACIÓN DE EXÁMENES\n\nFolio: ").append(m.request().folio())
+        .append("\nSede: ").append(m.request().siteCode()).append("\nEstado: ").append(m.request().status())
+        .append("\nSolicitante / AC: ").append(m.requester().name()).append("\nUPN: ").append(m.requester().upn())
+        .append("\n\nINFORMACIÓN COMERCIAL\nClave de curso programado: ").append(m.commercial().scheduledCourseCode())
+        .append("\nTipo de curso: ").append(m.commercial().courseType()).append("\nSegmento: ").append(m.commercial().segment())
+        .append("\nCentro de costos o sucursal: ").append(m.commercial().costCenter()).append("\nEmpresa: ").append(m.commercial().company())
+        .append("\nReferencia de facturación: ").append(m.commercial().billingReference()).append("\n\nPARTICIPANTES\n");
+    for (var p : m.participants()) b.append(p.number()).append(". ").append(p.name()).append(" — ").append(p.email()).append('\n');
+    b.append("\nEXÁMENES\n"); int i = 1;
+    for (var x : m.exams()) b.append(i++).append(". ").append(x.code()).append(" — ").append(x.name()).append(" — ").append(money(x.unitPrice(), x.currency())).append(" × ").append(x.quantity()).append(" = ").append(money(x.subtotal(), x.currency())).append('\n');
+    b.append("\nASIGNACIONES\n");
+    for (var a : m.assignments()) b.append(a.participant()).append(" → ").append(a.code()).append('\n');
+    b.append("\nTOTALES\n");
+    for (var t : m.totals()) b.append("TOTAL ").append(t.currency()).append(": ").append(money(t.total(), t.currency())).append('\n');
+    return b.append("\nOBSERVACIONES\n").append(m.observations()).append("\n\nRequiere revisión y aprobación antes de la compra.\n").toString();
+  }
+
+  private static void row(StringBuilder b, String key, String value) { b.append("<tr><th align=\"left\">").append(e(key)).append("</th><td>").append(e(value)).append("</td></tr>"); }
+  private static String e(String value) { return value == null || value.isBlank() ? "N/A" : value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;"); }
+  private static String money(BigDecimal value, String currency) { return value == null ? "N/A" : NumberFormat.getNumberInstance(Locale.US).format(value) + " " + currency; }
+  public record RenderedEmail(String html, String text) {}
 }

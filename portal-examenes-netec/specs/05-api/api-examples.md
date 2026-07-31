@@ -35,3 +35,6 @@ Un borrador puede enviar `"companyName": null`. Cuando existe:
 Backend normaliza espacios y devuelve `companyNameSnapshot`; no requiere ni consulta `companyId`.
 
 `GET /api/auth/me.username` significa UPN resuelto mediante `preferred_username`, `upn` o `email`; no es un correo capturado por Angular.
+Los campos comerciales `courseType`, `segment` y `costCenter` se envÃ­an como
+snapshots visibles seleccionados desde el catÃ¡logo y se conservan para el
+renderizado histÃ³rico del correo.
