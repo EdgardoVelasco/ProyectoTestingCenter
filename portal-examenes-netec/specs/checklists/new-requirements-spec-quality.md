@@ -1,0 +1,22 @@
+# Checklist de calidad — nuevas fases
+
+- [x] Rama nueva creada.
+- [x] No se modificó código.
+- [x] Facturación aparece como Fase 2.
+- [x] AP–AC aparece como Fase 3.
+- [x] Catálogo aparece como Fase 4.
+- [x] Solicitud enviada y folio especificados.
+- [x] Limpieza solo después de éxito.
+- [x] Error conserva datos.
+- [x] Nueva clave de idempotencia especificada.
+- [x] Reinicio al paso 1.
+- [x] Solo CSV; XLS/XLSX fuera de alcance.
+- [x] Máximo total de 100 alumnos.
+- [x] Nombre y apellido paterno obligatorios.
+- [x] Apellido materno opcional.
+- [x] Correo obligatorio y duplicados normalizados.
+- [x] Importados editables y sin importación parcial inicial.
+- [x] CSV no se almacena permanentemente ni aparece en logs.
+- [x] CN sustituido por Comercial en la documentación nueva.
+- [x] Correo conserva criterios Outlook y texto plano.
+- [x] Cambios futuros marcados NOT_IMPLEMENTED/NEEDS_DISCOVERY.
